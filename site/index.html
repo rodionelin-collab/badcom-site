@@ -192,6 +192,35 @@ footer a{color:#D5E1DA}
   .req dl{grid-template-columns:1fr}
   .req dd{margin-bottom:6px}
 }
+
+/* юридические страницы */
+.legal{max-width:860px}
+.legal h2{font-size:clamp(20px,2.4vw,26px);margin:40px 0 14px}
+.legal h2:first-child{margin-top:0}
+.legal h3{font-size:17px;margin:24px 0 8px}
+.legal p,.legal li{font-size:16px;max-width:none}
+.legal ul,.legal ol{padding-left:22px;margin:0 0 1em}
+.legal li{margin-bottom:6px}
+.legal .rev{color:var(--muted);font-size:15px}
+.legal dl{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:8px 18px;margin:0 0 1em;background:var(--white);padding:20px 24px;border-radius:var(--r-m)}
+.legal dt{color:var(--muted);font-size:15px}
+.legal dd{margin:0}
+.tbl{overflow-x:auto;margin:0 0 1.2em}
+.tbl table{border-collapse:collapse;width:100%;min-width:640px;background:var(--white);border-radius:var(--r-m);overflow:hidden;font-size:15px}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:12px 14px;border-top:1px solid #E3E9E5}
+.tbl th{background:#E3EAE6;font-weight:600;border-top:0}
+@media (max-width:700px){.legal dl{grid-template-columns:1fr}}
+
+/* баннер cookie */
+.ck{position:fixed;left:16px;right:16px;bottom:16px;z-index:50;max-width:760px;margin:0 auto;background:var(--ink);color:#E6EEE9;border-radius:var(--r-m);padding:18px 20px;box-shadow:0 8px 30px rgba(0,0,0,.28)}
+.ck[hidden]{display:none}
+.ck p{margin:0 0 14px;font-size:15px;line-height:1.5;max-width:none}
+.ck a{color:#fff}
+.ck .ck-act{display:flex;gap:10px;flex-wrap:wrap}
+.ck .btn{padding:11px 16px;font-size:15px}
+.ck .btn.ghost{color:#fff}
+footer .linkbtn{color:#D5E1DA}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
 </style>
 </head>
 <body>
@@ -344,7 +373,9 @@ footer a{color:#D5E1DA}
       <select id="f-who" name="client"><option>Частный дом</option><option>Организацию (ООО, ИП)</option></select>
       <label for="f-msg">Комментарий</label>
       <textarea id="f-msg" name="message" placeholder="Необязательно"></textarea>
-      <label class="consent"><input type="checkbox" name="consent" required> <span>Согласен на обработку персональных данных и с <a href="https://yadi.sk/i/C28wqz12xc28Ag" target="_blank" rel="noopener">политикой конфиденциальности</a></span></label>
+      <input type="hidden" name="consent_doc" value="/consent, редакция 2026-11-17">
+      <input type="hidden" name="consent_time" value="">
+      <label class="consent"><input type="checkbox" name="consent" required> <span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для рассмотрения заявки. Ознакомлен(а) с <a href="/privacy" target="_blank" rel="noopener">Политикой обработки персональных данных</a></span></label>
       <p style="margin:18px 0 0"><button class="btn" type="submit">Отправить заявку</button></p>
     </form>
   </div>
@@ -367,8 +398,12 @@ footer a{color:#D5E1DA}
       <h2 style="font-size:28px;margin-bottom:18px">Документы</h2>
       <ul class="docs">
         <li><a href="https://disk.yandex.ru/i/sEdjgfnS3Bldxw" target="_blank" rel="noopener">Реквизиты ИП Малов Д.С.</a><span>PDF: ИНН, ОГРНИП, расчётный счёт, адрес</span></li>
-        <li><a href="https://yadi.sk/i/uTbDkSQIcbQXaA" target="_blank" rel="noopener">Лицензия на телематические услуги связи</a><span>Скан, PDF</span></li>
-        <li><a href="https://yadi.sk/i/WFzji0ZR5Bea0w" target="_blank" rel="noopener">Лицензия на услуги передачи данных</a><span>Скан, PDF</span></li>
+        <li><a href="https://yadi.sk/i/uTbDkSQIcbQXaA" target="_blank" rel="noopener">Лицензия на телематические услуги связи</a><span>Скан, PDF. <span class="todo">Указать № лицензии, дату выдачи и срок действия</span></span></li>
+        <li><a href="https://yadi.sk/i/WFzji0ZR5Bea0w" target="_blank" rel="noopener">Лицензия на услуги передачи данных</a><span>Скан, PDF. <span class="todo">Указать № лицензии, дату выдачи и срок действия</span></span></li>
+        <li><a href="https://rkn.gov.ru/communication/register/license/" target="_blank" rel="noopener">Реестр лицензий в области связи</a><span>Проверить сведения о лицензиях на сайте Роскомнадзора</span></li>
+        <li><a href="/privacy">Политика обработки персональных данных</a><span>Редакция от 17 ноября 2026 г.</span></li>
+        <li><a href="/consent">Согласие на обработку персональных данных</a><span>Для заявок с сайта</span></li>
+        <li><a href="/cookies">Политика использования файлов cookie</a><span>Какие cookie использует сайт и как ими управлять</span></li>
       </ul>
       <details class="req">
         <summary>Реквизиты</summary>
@@ -383,6 +418,7 @@ footer a{color:#D5E1DA}
           <dt>Расчётный счёт</dt><dd>40802810823080000518</dd>
           <dt>Корр. счёт</dt><dd>30101810600000000774</dd>
           <dt>БИК</dt><dd>045004774</dd>
+          <dt>Реестр операторов ПДн</dt><dd><span class="todo">Указать регистрационный номер в реестре Роскомнадзора</span></dd>
         </dl>
       </details>
     </div>
@@ -393,8 +429,39 @@ footer a{color:#D5E1DA}
 <footer>
   <div class="wrap">
     <span>© ИП Малов Д.С., «Плохая Компания», Иркутск</span>
-    <span><a href="http://lk.badcom.ru/">Личный кабинет</a> &nbsp; <a href="https://t.me/badcom_news" target="_blank" rel="noopener">Telegram</a> &nbsp; <a href="https://yandex.ru/internet/" target="_blank" rel="noopener">Проверить скорость</a> &nbsp; <a href="https://yadi.sk/i/C28wqz12xc28Ag" target="_blank" rel="noopener">Политика конфиденциальности</a></span>
+    <span><a href="http://lk.badcom.ru/">Личный кабинет</a> &nbsp; <a href="https://t.me/badcom_news" target="_blank" rel="noopener">Telegram</a> &nbsp; <a href="https://yandex.ru/internet/" target="_blank" rel="noopener">Проверить скорость</a></span>
+    <span><a href="/privacy">Политика обработки персональных данных</a> &nbsp; <a href="/consent">Согласие на обработку ПДн</a> &nbsp; <a href="/cookies">Файлы cookie</a> &nbsp; <button class="linkbtn" type="button" data-ck-open>Настройки cookie</button></span>
   </div>
 </footer>
+<div class="ck" id="ck" role="dialog" aria-live="polite" aria-label="Файлы cookie" hidden>
+  <p>Сайт использует файлы cookie — небольшие текстовые файлы, которые сохраняются в вашем браузере, — чтобы работать корректно. Файлы для аналитики и рекламы мы включаем только с вашего согласия. Подробнее — в <a href="/cookies">Политике использования файлов cookie</a>.</p>
+  <div class="ck-act">
+    <button class="btn" type="button" data-ck="all">Принять все</button>
+    <button class="btn ghost" type="button" data-ck="necessary">Только необходимые</button>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='badcom_cookie_choice', TTL=365*24*3600*1000, box=document.getElementById('ck');
+  function read(){try{var v=JSON.parse(localStorage.getItem(KEY));if(v&&v.ts&&Date.now()-v.ts<TTL)return v}catch(e){}return null}
+  function save(a){try{localStorage.setItem(KEY,JSON.stringify({v:1,analytics:a,ts:Date.now()}))}catch(e){}}
+  var st=read();
+  /* Любой счётчик аналитики или рекламы подключать только после проверки: if(window.badcomCookie.analytics){...} */
+  window.badcomCookie={analytics:!!(st&&st.analytics)};
+  if(!st&&box)box.hidden=false;
+  if(box){box.addEventListener('click',function(e){
+    var b=e.target.closest('[data-ck]');if(!b)return;
+    var a=b.getAttribute('data-ck')==='all';save(a);window.badcomCookie.analytics=a;box.hidden=true;
+    document.dispatchEvent(new CustomEvent('badcom-cookie-choice',{detail:{analytics:a}}));
+  });}
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-ck-open]')&&box){box.hidden=false;box.querySelector('button').focus();}
+  });
+  var f=document.querySelector('form[name="zayavka"]');
+  if(f){f.addEventListener('submit',function(){
+    var t=f.querySelector('[name="consent_time"]');if(t)t.value=new Date().toISOString();
+  });}
+})();
+</script>
 </body>
 </html>

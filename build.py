@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Генератор статического сайта badcom.ru. Запуск: python3 build.py -> папка site/"""
-import os, html
+import os, html, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import legal
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "site")
 os.makedirs(OUT, exist_ok=True)
@@ -257,6 +259,8 @@ footer a{color:#D5E1DA}
 }
 """
 
+CSS += legal.LEGAL_CSS
+
 def head(title, desc, slug):
     canon = "https://badcom.ru" + ("" if slug == "index" else f"/{slug}")
     return f"""<!doctype html>
@@ -421,7 +425,9 @@ def apply_form(source):
       <select id="f-who" name="client"><option>Частный дом</option><option>Организацию (ООО, ИП)</option></select>
       <label for="f-msg">Комментарий</label>
       <textarea id="f-msg" name="message" placeholder="Необязательно"></textarea>
-      <label class="consent"><input type="checkbox" name="consent" required> <span>Согласен на обработку персональных данных и с <a href="https://yadi.sk/i/C28wqz12xc28Ag" target="_blank" rel="noopener">политикой конфиденциальности</a></span></label>
+      <input type="hidden" name="consent_doc" value="/consent, редакция {legal.CONSENT_VERSION}">
+      <input type="hidden" name="consent_time" value="">
+      <label class="consent"><input type="checkbox" name="consent" required> <span>Даю <a href="/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для рассмотрения заявки. Ознакомлен(а) с <a href="/privacy" target="_blank" rel="noopener">Политикой обработки персональных данных</a></span></label>
       <p style="margin:18px 0 0"><button class="btn" type="submit">Отправить заявку</button></p>
     </form>
   </div>
@@ -445,8 +451,12 @@ CONTACTS = f"""<section class="contacts" id="contacts">
       <h2 style="font-size:28px;margin-bottom:18px">Документы</h2>
       <ul class="docs">
         <li><a href="https://disk.yandex.ru/i/sEdjgfnS3Bldxw" target="_blank" rel="noopener">Реквизиты ИП Малов Д.С.</a><span>PDF: ИНН, ОГРНИП, расчётный счёт, адрес</span></li>
-        <li><a href="https://yadi.sk/i/uTbDkSQIcbQXaA" target="_blank" rel="noopener">Лицензия на телематические услуги связи</a><span>Скан, PDF</span></li>
-        <li><a href="https://yadi.sk/i/WFzji0ZR5Bea0w" target="_blank" rel="noopener">Лицензия на услуги передачи данных</a><span>Скан, PDF</span></li>
+        <li><a href="https://yadi.sk/i/uTbDkSQIcbQXaA" target="_blank" rel="noopener">Лицензия на телематические услуги связи</a><span>Скан, PDF. <span class="todo">Указать № лицензии, дату выдачи и срок действия</span></span></li>
+        <li><a href="https://yadi.sk/i/WFzji0ZR5Bea0w" target="_blank" rel="noopener">Лицензия на услуги передачи данных</a><span>Скан, PDF. <span class="todo">Указать № лицензии, дату выдачи и срок действия</span></span></li>
+        <li><a href="https://rkn.gov.ru/communication/register/license/" target="_blank" rel="noopener">Реестр лицензий в области связи</a><span>Проверить сведения о лицензиях на сайте Роскомнадзора</span></li>
+        <li><a href="/privacy">Политика обработки персональных данных</a><span>Редакция от {legal.REV_DATE}</span></li>
+        <li><a href="/consent">Согласие на обработку персональных данных</a><span>Для заявок с сайта</span></li>
+        <li><a href="/cookies">Политика использования файлов cookie</a><span>Какие cookie использует сайт и как ими управлять</span></li>
       </ul>
       <details class="req">
         <summary>Реквизиты</summary>
@@ -461,6 +471,7 @@ CONTACTS = f"""<section class="contacts" id="contacts">
           <dt>Расчётный счёт</dt><dd>40802810823080000518</dd>
           <dt>Корр. счёт</dt><dd>30101810600000000774</dd>
           <dt>БИК</dt><dd>045004774</dd>
+          <dt>Реестр операторов ПДн</dt><dd><span class="todo">Указать регистрационный номер в реестре Роскомнадзора</span></dd>
         </dl>
       </details>
     </div>
@@ -471,10 +482,11 @@ CONTACTS = f"""<section class="contacts" id="contacts">
 FOOTER = f"""<footer>
   <div class="wrap">
     <span>© ИП Малов Д.С., «Плохая Компания», Иркутск</span>
-    <span><a href="{LK}">Личный кабинет</a> &nbsp; <a href="{TG}" target="_blank" rel="noopener">Telegram</a> &nbsp; <a href="https://yandex.ru/internet/" target="_blank" rel="noopener">Проверить скорость</a> &nbsp; <a href="https://yadi.sk/i/C28wqz12xc28Ag" target="_blank" rel="noopener">Политика конфиденциальности</a></span>
+    <span><a href="{LK}">Личный кабинет</a> &nbsp; <a href="{TG}" target="_blank" rel="noopener">Telegram</a> &nbsp; <a href="https://yandex.ru/internet/" target="_blank" rel="noopener">Проверить скорость</a></span>
+    <span><a href="/privacy">Политика обработки персональных данных</a> &nbsp; <a href="/consent">Согласие на обработку ПДн</a> &nbsp; <a href="/cookies">Файлы cookie</a> &nbsp; <button class="linkbtn" type="button" data-ck-open>Настройки cookie</button></span>
   </div>
 </footer>
-</body>
+""" + legal.COOKIE_BANNER + """</body>
 </html>
 """
 
@@ -637,6 +649,19 @@ THANKS = head("Заявка отправлена — Плохая Компани
 <span id="contacts"></span>
 </main>
 {FOOTER}"""
+
+def legal_page(slug, h1, sub, content):
+    body = f"""{header(slug)}
+<main id="main">
+<div class="phead"><div class="wrap"><h1>{h1}</h1><p>{sub}</p></div></div>
+<section><div class="wrap">{content}</div></section>
+{CONTACTS}
+</main>
+{FOOTER}"""
+    return head(h1 + " — Плохая Компания", sub, slug) + body
+
+for slug, (h1, sub, content) in legal.build_pages(dict(PHONE=PHONE, EMAIL=EMAIL, LK=LK)).items():
+    pages[slug] = legal_page(slug, h1, sub, content)
 
 for slug, content in pages.items():
     with open(os.path.join(OUT, f"{slug}.html"), "w", encoding="utf-8") as f:
