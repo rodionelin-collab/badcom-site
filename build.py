@@ -18,6 +18,30 @@ TG = "https://t.me/badcom_news"
 DISTRICTS = ["Аларский", "Боханский", "Жигаловский", "Заларинский", "Зиминский",
              "Казачинско-Ленский", "Качугский", "Усольский", "Усть-Удинский", "Черемховский"]
 
+
+# ---------- населённые пункты по районам (файл data/settlements.txt) ----------
+def load_settlements():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "settlements.txt")
+    res, cur = {}, None
+    for line in open(path, encoding="utf-8"):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            cur = line[1:-1].strip()
+            assert cur in DISTRICTS, f"Неизвестный район в settlements.txt: {cur}"
+            res[cur] = []
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        name = parts[0]
+        kind = parts[1] if len(parts) > 1 else ""
+        note = parts[2] if len(parts) > 2 else ""
+        res[cur].append({"n": name, "t": kind, "x": note})
+    for d in res:
+        res[d].sort(key=lambda s: s["n"])
+    return res
+SETTLEMENTS = load_settlements()
+
 PAGES = [  # slug, короткое имя в навигации
     ("index", "Базовые"),
     ("tariff_zone2", "Зона «х2»"),
@@ -196,6 +220,8 @@ section{padding:72px 0}
 .faq summary::after{content:"";position:absolute;right:6px;top:50%;width:12px;height:12px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);transition:transform .2s}
 .faq details[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
 .faq .a{padding:0 0 20px}
+.settle-hint{font-size:14px;margin:8px 0 0}
+#settle-box[hidden]{display:none}
 .faq .a ol,.faq .a ul{padding-left:22px;margin:0 0 1em}
 .faq .a li{margin-bottom:6px}
 .todo{background:var(--todo);padding:2px 6px;border-radius:4px}
@@ -423,6 +449,8 @@ COND_BIZ_SAT = f"""<div class="cond">
 </div>"""
 
 def apply_form(source):
+    import json
+    settle_json = json.dumps({d: [{"n": s["n"], "t": s["t"], "x": s["x"]} for s in v] for d, v in SETTLEMENTS.items()}, ensure_ascii=False)
     opts = "".join(f"<option>{d} район</option>" for d in DISTRICTS)
     return f"""<section class="apply" id="form">
   <div class="wrap">
@@ -440,8 +468,13 @@ def apply_form(source):
       </div>
       <label for="f-dist">Район</label>
       <select id="f-dist" name="district"><option value="">Выберите район</option>{opts}<option>Другой</option></select>
-      <label for="f-addr">Населённый пункт и адрес</label>
-      <input id="f-addr" name="address" required placeholder="Например: п. Новостройка, ул. Лесная, 4">
+      <div id="settle-box" hidden>
+        <label for="f-settle">Населённый пункт</label>
+        <select id="f-settle" name="settlement"></select>
+        <p class="settle-hint muted" id="settle-hint" aria-live="polite"></p>
+      </div>
+      <label for="f-addr">Адрес</label>
+      <input id="f-addr" name="address" required placeholder="Улица и дом. Если вашего села нет в списке, напишите и его">
       <label for="f-who">Кого подключаем</label>
       <select id="f-who" name="client"><option>Частный дом</option><option>Организацию (ООО, ИП)</option></select>
       <label for="f-msg">Комментарий</label>
@@ -452,6 +485,33 @@ def apply_form(source):
       <p style="margin:18px 0 0"><button class="btn" type="submit">Отправить заявку</button></p>
     </form>
   </div>
+  <script>
+  (function(){{
+    var DATA={settle_json};
+    var dist=document.getElementById('f-dist'), box=document.getElementById('settle-box'),
+        sel=document.getElementById('f-settle'), hint=document.getElementById('settle-hint');
+    if(!dist||!sel)return;
+    function fill(){{
+      var d=dist.value.replace(/ район$/,''), list=DATA[d];
+      hint.innerHTML='';
+      if(!list){{box.hidden=true;sel.innerHTML='';return;}}
+      var h='<option value="">Выберите населённый пункт ('+list.length+')</option>';
+      list.forEach(function(s,i){{h+='<option value="'+i+'">'+s.n+(s.t?', '+s.t:'')+'</option>';}});
+      h+='<option value="other">Моего населённого пункта нет в списке</option>';
+      sel.innerHTML=h;box.hidden=false;
+    }}
+    function show(){{
+      var d=dist.value.replace(/ район$/,''), list=DATA[d]||[], v=sel.value;
+      if(v==='other'){{hint.textContent='Оставьте заявку, мы проверим возможность подключения у вас. Название села напишите в поле «Адрес».';return;}}
+      var s=list[Number(v)];
+      if(v===''||!s){{hint.textContent='';return;}}
+      if(s.x==='Спутник')hint.innerHTML='Здесь подключаем по <a href="/tariff_sputnik">тарифам «Спутник»</a>.';
+      else if(s.x==='х2')hint.innerHTML='Здесь действуют <a href="/tariff_zone2">тарифы «х2»</a>.';
+      else hint.textContent='';
+    }}
+    dist.addEventListener('change',fill);sel.addEventListener('change',show);fill();
+  }})();
+  </script>
 </section>
 """
 
