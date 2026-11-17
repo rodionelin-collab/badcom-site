@@ -232,6 +232,17 @@ section{padding:72px 0}
 .rv{columns:2 340px;column-gap:40px;margin-top:28px}
 .rv figure{break-inside:avoid;margin:0 0 36px}
 .rv blockquote{margin:0;font-size:17px;line-height:1.6}
+.rb-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:18px 0 6px}
+.rb{display:inline-flex;align-items:baseline;gap:6px;padding:10px 16px;border-radius:12px;background:rgba(255,255,255,.1);color:inherit;text-decoration:none}
+.rb b{font-size:28px;line-height:1}.rb span{color:var(--signal)}.rb small{opacity:.85}
+.rb-asof{opacity:.7;flex-basis:100%}
+.stars{color:var(--signal);letter-spacing:2px;font-size:16px}.stars i{font-style:normal;opacity:.25}
+.rv-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:14px;opacity:.9}
+.rvc{background:rgba(255,255,255,.06);padding:18px 20px;border-radius:14px}
+.rv-page{columns:2 360px;column-gap:24px}.rv-page .rvc{margin-bottom:20px;background:var(--mist,#EEF3F0);color:#16231D}
+.rv.rv-page figcaption{color:#16231D}.rv.rv-page .rv-src{color:#4D5F56;opacity:1}.rv.rv-page .rv-top{color:#16231D}.rvp .rb{background:#E3ECE7;color:#16231D}.rvp .rb-asof{color:#16231D}
+.rv-page blockquote{font-size:16px}
+.btn.ghost.dark{color:#16231D}
 .rv-src{font-weight:400;opacity:.75}
 .rv-links{margin-top:8px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .rv-links p{flex-basis:100%;margin:0 0 4px;color:#C9D8CF}
@@ -623,6 +634,7 @@ def faq():
         out.append(f"<details><summary>{q}</summary><div class=\"a\">{a}</div></details>")
     return "\n".join(out)
 
+MONTHS = {m: i for i, m in enumerate("января февраля марта апреля мая июня июля августа сентября октября ноября декабря".split(), 1)}
 def load_reviews():
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "reviews.txt")
     res = []
@@ -630,18 +642,42 @@ def load_reviews():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        a, s, t = [p.strip() for p in line.split("|", 2)]
-        res.append((a, s, t))
+        a, s, d, r, t = [p.strip() for p in line.split("|", 4)]
+        dd, mm, yy = d.split()
+        res.append({"a": a, "s": s, "d": d, "r": int(r), "t": t, "k": (int(yy), MONTHS[mm], int(dd))})
+    res.sort(key=lambda x: x["k"], reverse=True)
     return res
 REVIEWS = load_reviews()
+# Рейтинги на карточках организаций на 17.11.2026 (обновляются вручную)
+REVIEW_RATINGS = [("Яндекс Карты", "4,8", "78 оценок", "yandex"), ("2ГИС", "4,9", "102 оценки", "2gis")]
+REVIEWS_AS_OF = "17 ноября 2026 г."
 REVIEW_LINKS = {
     "yandex": "https://yandex.ru/maps/org/plokhaya_kompaniya/43187634695/reviews/",
     "2gis": "https://2gis.ru/irkutsk/firm/70000001036377445/tab/reviews",
 }
 
+def stars(n):
+    return f'<span class="stars" role="img" aria-label="Оценка {n} из 5">' + "★" * n + '<i>' + "★" * (5 - n) + '</i></span>'
+
+def reviews_html(items):
+    out = []
+    for x in items:
+        out.append(
+            f'<figure class="rvc"><div class="rv-top">{stars(x["r"])}<span class="rv-date">{html.escape(x["d"])}</span></div>'
+            f'<blockquote>{html.escape(x["t"])}</blockquote>'
+            f'<figcaption>{html.escape(x["a"])} <span class="rv-src">· {html.escape(x["s"])}</span></figcaption></figure>')
+    return "".join(out)
+
+def rating_badges():
+    items = "".join(
+        f'<a class="rb" href="{REVIEW_LINKS[k]}" target="_blank" rel="noopener noreferrer"><b>{r}</b><span>★</span><small>{html.escape(n)}, {c}</small></a>'
+        for n, r, c, k in REVIEW_RATINGS)
+    return f'<div class="rb-row">{items}<small class="rb-asof">по данным карточек на {REVIEWS_AS_OF}</small></div>'
+
+
 def index_page():
     dist = "".join(f"<li>{d}</li>" for d in DISTRICTS)
-    rv = "".join(f"<figure><blockquote>{html.escape(t)}</blockquote><figcaption>{html.escape(a)}{(' <span class=\"rv-src\">· ' + html.escape(s) + '</span>') if s else ''}</figcaption></figure>" for a, s, t in REVIEWS)
+    rv = reviews_html(REVIEWS[:6])
     body = f"""{header('index')}
 <main id="main">
 <section class="hero" style="padding-top:64px">
@@ -693,9 +729,11 @@ def index_page():
 <section class="reviews" id="otzyvy">
   <div class="wrap">
     <h2>Что говорят абоненты</h2>
+    {rating_badges()}
     <div class="rv">{rv}</div>
     <div class="rv-links">
-      <p>Больше отзывов — на картах. Там же можно оставить свой.</p>
+      <a class="btn" href="/reviews">Все отзывы ({len(REVIEWS)})</a>
+      <p>Оставить свой отзыв можно на картах:</p>
       <a class="btn ghost" href="{REVIEW_LINKS['yandex']}" target="_blank" rel="noopener noreferrer">Отзывы на Яндекс Картах</a>
       <a class="btn ghost" href="{REVIEW_LINKS['2gis']}" target="_blank" rel="noopener noreferrer">Отзывы в 2ГИС</a>
     </div>
@@ -773,6 +811,18 @@ def legal_page(slug, h1, sub, content):
 </main>
 {FOOTER}"""
     return head(h1 + " — Плохая Компания", sub, slug) + body
+
+def reviews_page():
+    total = len(REVIEWS)
+    low = sum(1 for x in REVIEWS if x["r"] <= 3)
+    content = f"""<div class="rvp">{rating_badges()}
+<p>Здесь собраны отзывы с карточек «Плохой Компании» на Яндекс Картах и в 2ГИС — {total} шт., в том числе критические ({low}). Тексты приведены без ответов компании, в них исправлены орфография и пунктуация, имена сокращены. Актуальные отзывы и ответы компании — на самих картах, там же можно оставить свой.</p>
+<div class="rv rv-page">{reviews_html(REVIEWS)}</div>
+<div class="rv-links"><a class="btn ghost dark" href="{REVIEW_LINKS['yandex']}" target="_blank" rel="noopener noreferrer">Отзывы на Яндекс Картах</a>
+<a class="btn ghost dark" href="{REVIEW_LINKS['2gis']}" target="_blank" rel="noopener noreferrer">Отзывы в 2ГИС</a></div></div>"""
+    return legal_page("reviews", "Отзывы абонентов", "Отзывы с Яндекс Карт и 2ГИС", content)
+
+pages["reviews"] = reviews_page()
 
 for slug, (h1, sub, content) in legal.build_pages(dict(PHONE=PHONE, EMAIL=EMAIL, LK=LK)).items():
     pages[slug] = legal_page(slug, h1, sub, content)
