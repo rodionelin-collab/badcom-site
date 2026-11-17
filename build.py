@@ -261,6 +261,28 @@ footer a{color:#D5E1DA}
 
 CSS += legal.LEGAL_CSS
 
+# ---------- шрифты: только со своего сервера ----------
+import glob, shutil
+FONTS_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+def font_face():
+    """Берёт из папки fonts/ переменные шрифты Golos Text и Unbounded (.woff2 или .ttf).
+    Если файлов нет, сайт показывает системный шрифт и ничего не грузит с чужих серверов."""
+    css = ""
+    fmt = {".woff2": "woff2", ".ttf": "truetype"}
+    for family, key in (("Golos Text", "golos"), ("Unbounded", "unbounded")):
+        found = [p for p in sorted(glob.glob(os.path.join(FONTS_SRC, "*")))
+                 if key in os.path.basename(p).lower() and os.path.splitext(p)[1].lower() in fmt]
+        found.sort(key=lambda p: (os.path.splitext(p)[1].lower() != ".woff2", "variable" not in p.lower()))
+        if not found:
+            continue
+        p = found[0]
+        os.makedirs(os.path.join(OUT, "fonts"), exist_ok=True)
+        shutil.copy(p, os.path.join(OUT, "fonts", os.path.basename(p)))
+        css += ('@font-face{font-family:"%s";src:url("/fonts/%s") format("%s");font-weight:400 900;font-style:normal;font-display:swap}\n'
+                % (family, os.path.basename(p), fmt[os.path.splitext(p)[1].lower()]))
+    return css
+FONT_FACE = font_face()
+
 def head(title, desc, slug):
     canon = "https://badcom.ru" + ("" if slug == "index" else f"/{slug}")
     return f"""<!doctype html>
@@ -276,10 +298,7 @@ def head(title, desc, slug):
 <meta property="og:url" content="{canon}">
 <meta property="og:type" content="website">
 <meta name="format-detection" content="telephone=no">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;600&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
-<style>{CSS}</style>
+<style>{FONT_FACE}{CSS}</style>
 </head>
 <body>
 <a class="skip" href="#main">Перейти к содержимому</a>
