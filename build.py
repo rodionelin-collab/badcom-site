@@ -265,14 +265,14 @@ CSS += legal.LEGAL_CSS
 import glob, shutil
 FONTS_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
 def font_face():
-    """Берёт из папки fonts/ переменные шрифты Golos Text и Unbounded (.woff2 или .ttf).
+    """Берёт из папки fonts/ переменные шрифты Golos Text и Unbounded (.woff2, .woff или .ttf).
     Если файлов нет, сайт показывает системный шрифт и ничего не грузит с чужих серверов."""
     css = ""
-    fmt = {".woff2": "woff2", ".ttf": "truetype"}
+    fmt = {".woff2": "woff2", ".woff": "woff", ".ttf": "truetype"}
     for family, key in (("Golos Text", "golos"), ("Unbounded", "unbounded")):
         found = [p for p in sorted(glob.glob(os.path.join(FONTS_SRC, "*")))
                  if key in os.path.basename(p).lower() and os.path.splitext(p)[1].lower() in fmt]
-        found.sort(key=lambda p: (os.path.splitext(p)[1].lower() != ".woff2", "variable" not in p.lower()))
+        found.sort(key=lambda p: (list(fmt).index(os.path.splitext(p)[1].lower()), "variable" not in p.lower()))
         if not found:
             continue
         p = found[0]
