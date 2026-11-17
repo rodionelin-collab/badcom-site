@@ -70,6 +70,21 @@ p{margin:0 0 1em;max-width:68ch}
 .where h2{font-size:18px;margin-bottom:6px}
 .where p{font-size:15px;color:var(--muted);margin-bottom:14px}
 .where ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.where .dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline;font-size:15px;color:var(--ink);text-decoration:underline;text-decoration-color:#B9C7BF;text-underline-offset:4px}
+.where .dbtn:hover,.where .dbtn.on{color:var(--taiga);text-decoration-color:var(--signal)}
+.where .dbtn:focus-visible{outline:2px solid var(--taiga);outline-offset:3px;border-radius:4px}
+.where .dbtn.on{font-weight:700}
+.where .dlist[hidden],.where .wl[hidden]{display:none}
+.where li:has(.dbtn)::before{margin-right:10px}
+.wl{margin-top:16px;padding:14px 16px;border-radius:12px;background:#EEF3F0}
+.wl h3{font-size:16px;margin:0 0 8px}
+.wl ul{display:block;columns:2 150px;max-height:230px;overflow:auto;margin:0 0 12px;padding:0}
+.where .wl li{border:0;padding:3px 0;font-size:14px;break-inside:avoid}.where .wl li::before{display:none}
+.wl small{color:var(--muted)}
+.wl .btn.sm{padding:9px 14px;font-size:14px}
+.wl-close{all:unset;cursor:pointer;margin-left:12px;font-size:14px;color:var(--muted);text-decoration:underline}
+.wl-static details{border-bottom:1px solid #E3E9E5;padding:6px 0;font-size:15px}
+.wl-static p{font-size:14px;margin:6px 0 0}
 .where li{padding:7px 0;border-bottom:1px solid #E3E9E5;font-size:15px}
 .where li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--signal);margin-right:10px;vertical-align:1px}
 
@@ -421,8 +436,8 @@ footer .linkbtn{color:#D5E1DA}
     <div class="note">
       <h2 style="font-size:28px;margin-bottom:18px">Документы</h2>
       <ul class="docs">
-        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
-        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
+        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
+        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
         <li><a href="https://rkn.gov.ru/communication/register/license/" target="_blank" rel="noopener">Реестр лицензий в области связи</a><span>Проверить сведения о лицензиях на сайте Роскомнадзора</span></li>
         <li><a href="/privacy">Политика обработки персональных данных</a><span>Редакция от 17 ноября 2026 г.</span></li>
         <li><a href="/consent">Согласие на обработку персональных данных</a><span>Для заявок с сайта</span></li>

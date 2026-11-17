@@ -160,6 +160,21 @@ p{margin:0 0 1em;max-width:68ch}
 .where h2{font-size:18px;margin-bottom:6px}
 .where p{font-size:15px;color:var(--muted);margin-bottom:14px}
 .where ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.where .dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline;font-size:15px;color:var(--ink);text-decoration:underline;text-decoration-color:#B9C7BF;text-underline-offset:4px}
+.where .dbtn:hover,.where .dbtn.on{color:var(--taiga);text-decoration-color:var(--signal)}
+.where .dbtn:focus-visible{outline:2px solid var(--taiga);outline-offset:3px;border-radius:4px}
+.where .dbtn.on{font-weight:700}
+.where .dlist[hidden],.where .wl[hidden]{display:none}
+.where li:has(.dbtn)::before{margin-right:10px}
+.wl{margin-top:16px;padding:14px 16px;border-radius:12px;background:#EEF3F0}
+.wl h3{font-size:16px;margin:0 0 8px}
+.wl ul{display:block;columns:2 150px;max-height:230px;overflow:auto;margin:0 0 12px;padding:0}
+.where .wl li{border:0;padding:3px 0;font-size:14px;break-inside:avoid}.where .wl li::before{display:none}
+.wl small{color:var(--muted)}
+.wl .btn.sm{padding:9px 14px;font-size:14px}
+.wl-close{all:unset;cursor:pointer;margin-left:12px;font-size:14px;color:var(--muted);text-decoration:underline}
+.wl-static details{border-bottom:1px solid #E3E9E5;padding:6px 0;font-size:15px}
+.wl-static p{font-size:14px;margin:6px 0 0}
 .where li{padding:7px 0;border-bottom:1px solid #E3E9E5;font-size:15px}
 .where li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--signal);margin-right:10px;vertical-align:1px}
 
@@ -545,8 +560,8 @@ CONTACTS = f"""<section class="contacts" id="contacts">
     <div class="note">
       <h2 style="font-size:28px;margin-bottom:18px">Документы</h2>
       <ul class="docs">
-        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
-        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
+        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
+        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
         <li><a href="https://rkn.gov.ru/communication/register/license/" target="_blank" rel="noopener">Реестр лицензий в области связи</a><span>Проверить сведения о лицензиях на сайте Роскомнадзора</span></li>
         <li><a href="/privacy">Политика обработки персональных данных</a><span>Редакция от {legal.REV_DATE}</span></li>
         <li><a href="/consent">Согласие на обработку персональных данных</a><span>Для заявок с сайта</span></li>
@@ -675,7 +690,12 @@ def rating_badges():
 
 
 def index_page():
-    dist = "".join(f"<li>{d}</li>" for d in DISTRICTS)
+    import json as _json
+    dist = "".join(f'<li><button type="button" class="dbtn" data-d="{d}" aria-expanded="false" aria-controls="wl-panel">{d}</button></li>' for d in DISTRICTS)
+    dist_static = "".join(
+        f'<details><summary>{d} район ({len(SETTLEMENTS[d])})</summary><p>' + ", ".join(html.escape(s["n"]) for s in SETTLEMENTS[d]) + '</p></details>'
+        for d in DISTRICTS)
+    zona_json = _json.dumps({d: [{"n": s["n"], "t": s["t"], "x": s["x"]} for s in v] for d, v in SETTLEMENTS.items()}, ensure_ascii=False)
     rv = reviews_html(REVIEWS[:6])
     body = f"""{header('index')}
 <main id="main">
@@ -692,8 +712,34 @@ def index_page():
     </div>
     <aside class="where" id="zona" aria-labelledby="zona-h">
       <h2 id="zona-h">Где мы работаем</h2>
-      <p>Подключаем в населённых пунктах этих районов. Не нашли свой — всё равно оставьте заявку, проверим.</p>
-      <ul>{dist}</ul>
+      <p>Подключаем в населённых пунктах этих районов. Нажмите на район, чтобы увидеть список. Не нашли свой — всё равно оставьте заявку, проверим.</p>
+      <ul class="dlist" hidden>{dist}</ul>
+      <div class="wl" id="wl-panel" hidden aria-live="polite"></div>
+      <noscript><div class="wl-static">{dist_static}</div></noscript>
+      <script>
+      (function(){{
+        var DATA={zona_json}, ul=document.querySelector('.where .dlist'), panel=document.getElementById('wl-panel');
+        if(!ul||!panel)return; ul.hidden=false;
+        function esc(s){{return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}}
+        function close(){{panel.hidden=true;panel.innerHTML='';ul.querySelectorAll('.dbtn').forEach(function(b){{b.setAttribute('aria-expanded','false');b.classList.remove('on');}});}}
+        ul.addEventListener('click',function(e){{
+          var btn=e.target.closest('.dbtn'); if(!btn)return;
+          var d=btn.getAttribute('data-d'), was=btn.getAttribute('aria-expanded')==='true';
+          close(); if(was)return;
+          btn.setAttribute('aria-expanded','true'); btn.classList.add('on');
+          var list=DATA[d]||[], h='<h3>'+d+' район: '+list.length+' '+(list.length%10===1&&list.length%100!==11?'населённый пункт':(list.length%10>=2&&list.length%10<=4&&(list.length%100<10||list.length%100>=20)?'населённых пункта':'населённых пунктов'))+'</h3><ul>';
+          list.forEach(function(s){{h+='<li>'+esc(s.n)+(s.t?' <small>'+esc(s.t)+'</small>':'')+(s.x==='Спутник'?' <a href="/tariff_sputnik">Спутник</a>':(s.x==='х2'?' <a href="/tariff_zone2">х2</a>':''))+'</li>';}});
+          h+='</ul><a class="btn sm" href="#form" data-pick="'+d+'">Оставить заявку в этом районе</a><button type="button" class="wl-close">Закрыть</button>';
+          panel.innerHTML=h; panel.hidden=false;
+        }});
+        panel.addEventListener('click',function(e){{
+          if(e.target.closest('.wl-close')){{close();return;}}
+          var a=e.target.closest('[data-pick]'); if(!a)return;
+          var sel=document.getElementById('f-dist'); if(!sel)return;
+          sel.value=a.getAttribute('data-pick')+' район'; sel.dispatchEvent(new Event('change'));
+        }});
+      }})();
+      </script>
     </aside>
   </div>
 </section>

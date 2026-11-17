@@ -70,6 +70,21 @@ p{margin:0 0 1em;max-width:68ch}
 .where h2{font-size:18px;margin-bottom:6px}
 .where p{font-size:15px;color:var(--muted);margin-bottom:14px}
 .where ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.where .dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline;font-size:15px;color:var(--ink);text-decoration:underline;text-decoration-color:#B9C7BF;text-underline-offset:4px}
+.where .dbtn:hover,.where .dbtn.on{color:var(--taiga);text-decoration-color:var(--signal)}
+.where .dbtn:focus-visible{outline:2px solid var(--taiga);outline-offset:3px;border-radius:4px}
+.where .dbtn.on{font-weight:700}
+.where .dlist[hidden],.where .wl[hidden]{display:none}
+.where li:has(.dbtn)::before{margin-right:10px}
+.wl{margin-top:16px;padding:14px 16px;border-radius:12px;background:#EEF3F0}
+.wl h3{font-size:16px;margin:0 0 8px}
+.wl ul{display:block;columns:2 150px;max-height:230px;overflow:auto;margin:0 0 12px;padding:0}
+.where .wl li{border:0;padding:3px 0;font-size:14px;break-inside:avoid}.where .wl li::before{display:none}
+.wl small{color:var(--muted)}
+.wl .btn.sm{padding:9px 14px;font-size:14px}
+.wl-close{all:unset;cursor:pointer;margin-left:12px;font-size:14px;color:var(--muted);text-decoration:underline}
+.wl-static details{border-bottom:1px solid #E3E9E5;padding:6px 0;font-size:15px}
+.wl-static p{font-size:14px;margin:6px 0 0}
 .where li{padding:7px 0;border-bottom:1px solid #E3E9E5;font-size:15px}
 .where li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--signal);margin-right:10px;vertical-align:1px}
 
@@ -271,8 +286,34 @@ footer .linkbtn{color:#D5E1DA}
     </div>
     <aside class="where" id="zona" aria-labelledby="zona-h">
       <h2 id="zona-h">Где мы работаем</h2>
-      <p>Подключаем в населённых пунктах этих районов. Не нашли свой — всё равно оставьте заявку, проверим.</p>
-      <ul><li>Аларский</li><li>Боханский</li><li>Жигаловский</li><li>Заларинский</li><li>Зиминский</li><li>Казачинско-Ленский</li><li>Качугский</li><li>Усольский</li><li>Усть-Удинский</li><li>Черемховский</li></ul>
+      <p>Подключаем в населённых пунктах этих районов. Нажмите на район, чтобы увидеть список. Не нашли свой — всё равно оставьте заявку, проверим.</p>
+      <ul class="dlist" hidden><li><button type="button" class="dbtn" data-d="Аларский" aria-expanded="false" aria-controls="wl-panel">Аларский</button></li><li><button type="button" class="dbtn" data-d="Боханский" aria-expanded="false" aria-controls="wl-panel">Боханский</button></li><li><button type="button" class="dbtn" data-d="Жигаловский" aria-expanded="false" aria-controls="wl-panel">Жигаловский</button></li><li><button type="button" class="dbtn" data-d="Заларинский" aria-expanded="false" aria-controls="wl-panel">Заларинский</button></li><li><button type="button" class="dbtn" data-d="Зиминский" aria-expanded="false" aria-controls="wl-panel">Зиминский</button></li><li><button type="button" class="dbtn" data-d="Казачинско-Ленский" aria-expanded="false" aria-controls="wl-panel">Казачинско-Ленский</button></li><li><button type="button" class="dbtn" data-d="Качугский" aria-expanded="false" aria-controls="wl-panel">Качугский</button></li><li><button type="button" class="dbtn" data-d="Усольский" aria-expanded="false" aria-controls="wl-panel">Усольский</button></li><li><button type="button" class="dbtn" data-d="Усть-Удинский" aria-expanded="false" aria-controls="wl-panel">Усть-Удинский</button></li><li><button type="button" class="dbtn" data-d="Черемховский" aria-expanded="false" aria-controls="wl-panel">Черемховский</button></li></ul>
+      <div class="wl" id="wl-panel" hidden aria-live="polite"></div>
+      <noscript><div class="wl-static"><details><summary>Аларский район (15)</summary><p>Аларь, Алзобей, Аляты, Ангарский, Балтуй, Готол, Зангей, Киркей, Кукунур, Куркат, Малолучинск, Ныгда, Отрадная, Тыргетуй, Хигинская</p></details><details><summary>Боханский район (6)</summary><p>Казачье, Калашникова, Каменка, Махонькина (Калашникова), Середкина, Угольная</p></details><details><summary>Жигаловский район (9)</summary><p>Байдоново, Головновка, Знаменка, Игжиновка, Кузнецовка, Лукиново, Рудовка, Тутура, Якимовка</p></details><details><summary>Заларинский район (7)</summary><p>Бабагай, Жизневка, Исаковка, Мариинск, Муруй, Хор-Бутырина, Черемшанка</p></details><details><summary>Зиминский район (7)</summary><p>Басалаевка, Батама, Верхнеокинский, Глинки, Зулумай, Масляногорск, Новолетники</p></details><details><summary>Казачинско-Ленский район (1)</summary><p>Карам</p></details><details><summary>Качугский район (5)</summary><p>Большая Тарель, Верхоленск, Ремизова (Верхоленск), Толмачева (Верхоленск), Челпанова (Верхоленск)</p></details><details><summary>Усольский район (1)</summary><p>Тальяны</p></details><details><summary>Усть-Удинский район (3)</summary><p>Аносово, Ключи, Светлолобово</p></details><details><summary>Черемховский район (41)</summary><p>Балухарь, Белькова, Верхняя Иреть, Голуметь, Городок (Новостройка), Елоты, Жаргон, Жмурова, Заморская, Инга (Новостройка), Каменно-Ангарск, Катом, Козлова, Красный Брод, Лохово, Мандагай, Нены, Новогромово, Новостройка, Онот, Парфёново, Поздеева, Полежаева, Русская Аларь, Рысево, Савинская, Сарапулова, Саянское, Средняя, Старый Кутугун, Сутупова, Табук, Тальники, Трудовой, Тунгуска, Тунгусы (Тальники), Чемодариха, Чернушка 1-я (Новостройка), Чернушка 2-я (Новостройка), Шаманаева, Юлинск (Тальники)</p></details></div></noscript>
+      <script>
+      (function(){
+        var DATA={"Аларский": [{"n": "Аларь", "t": "село", "x": ""}, {"n": "Алзобей", "t": "деревня", "x": ""}, {"n": "Аляты", "t": "село", "x": ""}, {"n": "Ангарский", "t": "поселок", "x": ""}, {"n": "Балтуй", "t": "деревня", "x": ""}, {"n": "Готол", "t": "деревня", "x": ""}, {"n": "Зангей", "t": "деревня", "x": ""}, {"n": "Киркей", "t": "деревня", "x": ""}, {"n": "Кукунур", "t": "деревня", "x": ""}, {"n": "Куркат", "t": "деревня", "x": ""}, {"n": "Малолучинск", "t": "деревня", "x": ""}, {"n": "Ныгда", "t": "деревня", "x": ""}, {"n": "Отрадная", "t": "деревня", "x": ""}, {"n": "Тыргетуй", "t": "село", "x": ""}, {"n": "Хигинская", "t": "деревня", "x": ""}], "Боханский": [{"n": "Казачье", "t": "село", "x": ""}, {"n": "Калашникова", "t": "заимка", "x": ""}, {"n": "Каменка", "t": "село", "x": ""}, {"n": "Махонькина (Калашникова)", "t": "заимка", "x": ""}, {"n": "Середкина", "t": "деревня", "x": ""}, {"n": "Угольная", "t": "деревня", "x": ""}], "Жигаловский": [{"n": "Байдоново", "t": "деревня", "x": "Спутник"}, {"n": "Головновка", "t": "деревня", "x": ""}, {"n": "Знаменка", "t": "село", "x": ""}, {"n": "Игжиновка", "t": "деревня", "x": ""}, {"n": "Кузнецовка", "t": "деревня", "x": ""}, {"n": "Лукиново", "t": "село", "x": "Спутник"}, {"n": "Рудовка", "t": "село", "x": ""}, {"n": "Тутура", "t": "село", "x": ""}, {"n": "Якимовка", "t": "деревня", "x": ""}], "Заларинский": [{"n": "Бабагай", "t": "село", "x": ""}, {"n": "Жизневка", "t": "участок", "x": ""}, {"n": "Исаковка", "t": "деревня", "x": ""}, {"n": "Мариинск", "t": "участок", "x": ""}, {"n": "Муруй", "t": "деревня", "x": ""}, {"n": "Хор-Бутырина", "t": "посёлок", "x": ""}, {"n": "Черемшанка", "t": "село", "x": ""}], "Зиминский": [{"n": "Басалаевка", "t": "село", "x": ""}, {"n": "Батама", "t": "село", "x": ""}, {"n": "Верхнеокинский", "t": "участок", "x": ""}, {"n": "Глинки", "t": "село", "x": ""}, {"n": "Зулумай", "t": "село", "x": ""}, {"n": "Масляногорск", "t": "село", "x": ""}, {"n": "Новолетники", "t": "село", "x": ""}], "Казачинско-Ленский": [{"n": "Карам", "t": "село", "x": "Спутник"}], "Качугский": [{"n": "Большая Тарель", "t": "село", "x": "Спутник"}, {"n": "Верхоленск", "t": "село", "x": ""}, {"n": "Ремизова (Верхоленск)", "t": "деревня", "x": ""}, {"n": "Толмачева (Верхоленск)", "t": "деревня", "x": ""}, {"n": "Челпанова (Верхоленск)", "t": "деревня", "x": ""}], "Усольский": [{"n": "Тальяны", "t": "поселок", "x": ""}], "Усть-Удинский": [{"n": "Аносово", "t": "село", "x": ""}, {"n": "Ключи", "t": "деревня", "x": ""}, {"n": "Светлолобово", "t": "село", "x": ""}], "Черемховский": [{"n": "Балухарь", "t": "деревня", "x": ""}, {"n": "Белькова", "t": "деревня", "x": ""}, {"n": "Верхняя Иреть", "t": "деревня", "x": ""}, {"n": "Голуметь", "t": "село", "x": ""}, {"n": "Городок (Новостройка)", "t": "поселок", "x": ""}, {"n": "Елоты", "t": "деревня", "x": ""}, {"n": "Жаргон", "t": "посёлок", "x": ""}, {"n": "Жмурова", "t": "деревня", "x": ""}, {"n": "Заморская", "t": "деревня", "x": ""}, {"n": "Инга (Новостройка)", "t": "село", "x": ""}, {"n": "Каменно-Ангарск", "t": "село", "x": ""}, {"n": "Катом", "t": "деревня", "x": ""}, {"n": "Козлова", "t": "деревня", "x": ""}, {"n": "Красный Брод", "t": "деревня", "x": ""}, {"n": "Лохово", "t": "село", "x": ""}, {"n": "Мандагай", "t": "поселок", "x": ""}, {"n": "Нены", "t": "деревня", "x": ""}, {"n": "Новогромово", "t": "село", "x": ""}, {"n": "Новостройка", "t": "поселок", "x": ""}, {"n": "Онот", "t": "село", "x": ""}, {"n": "Парфёново", "t": "село", "x": ""}, {"n": "Поздеева", "t": "деревня", "x": ""}, {"n": "Полежаева", "t": "поселок", "x": ""}, {"n": "Русская Аларь", "t": "деревня", "x": ""}, {"n": "Рысево", "t": "село", "x": ""}, {"n": "Савинская", "t": "деревня", "x": ""}, {"n": "Сарапулова", "t": "деревня", "x": ""}, {"n": "Саянское", "t": "село", "x": ""}, {"n": "Средняя", "t": "деревня", "x": ""}, {"n": "Старый Кутугун", "t": "деревня", "x": ""}, {"n": "Сутупова", "t": "деревня", "x": ""}, {"n": "Табук", "t": "деревня", "x": ""}, {"n": "Тальники", "t": "село", "x": ""}, {"n": "Трудовой", "t": "поселок", "x": ""}, {"n": "Тунгуска", "t": "село", "x": "х2"}, {"n": "Тунгусы (Тальники)", "t": "деревня", "x": ""}, {"n": "Чемодариха", "t": "заимка", "x": ""}, {"n": "Чернушка 1-я (Новостройка)", "t": "поселок", "x": ""}, {"n": "Чернушка 2-я (Новостройка)", "t": "поселок", "x": ""}, {"n": "Шаманаева", "t": "деревня", "x": ""}, {"n": "Юлинск (Тальники)", "t": "поселок", "x": ""}]}, ul=document.querySelector('.where .dlist'), panel=document.getElementById('wl-panel');
+        if(!ul||!panel)return; ul.hidden=false;
+        function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+        function close(){panel.hidden=true;panel.innerHTML='';ul.querySelectorAll('.dbtn').forEach(function(b){b.setAttribute('aria-expanded','false');b.classList.remove('on');});}
+        ul.addEventListener('click',function(e){
+          var btn=e.target.closest('.dbtn'); if(!btn)return;
+          var d=btn.getAttribute('data-d'), was=btn.getAttribute('aria-expanded')==='true';
+          close(); if(was)return;
+          btn.setAttribute('aria-expanded','true'); btn.classList.add('on');
+          var list=DATA[d]||[], h='<h3>'+d+' район: '+list.length+' '+(list.length%10===1&&list.length%100!==11?'населённый пункт':(list.length%10>=2&&list.length%10<=4&&(list.length%100<10||list.length%100>=20)?'населённых пункта':'населённых пунктов'))+'</h3><ul>';
+          list.forEach(function(s){h+='<li>'+esc(s.n)+(s.t?' <small>'+esc(s.t)+'</small>':'')+(s.x==='Спутник'?' <a href="/tariff_sputnik">Спутник</a>':(s.x==='х2'?' <a href="/tariff_zone2">х2</a>':''))+'</li>';});
+          h+='</ul><a class="btn sm" href="#form" data-pick="'+d+'">Оставить заявку в этом районе</a><button type="button" class="wl-close">Закрыть</button>';
+          panel.innerHTML=h; panel.hidden=false;
+        });
+        panel.addEventListener('click',function(e){
+          if(e.target.closest('.wl-close')){close();return;}
+          var a=e.target.closest('[data-pick]'); if(!a)return;
+          var sel=document.getElementById('f-dist'); if(!sel)return;
+          sel.value=a.getAttribute('data-pick')+' район'; sel.dispatchEvent(new Event('change'));
+        });
+      })();
+      </script>
     </aside>
   </div>
 </section>
@@ -453,8 +494,8 @@ footer .linkbtn{color:#D5E1DA}
     <div class="note">
       <h2 style="font-size:28px;margin-bottom:18px">Документы</h2>
       <ul class="docs">
-        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
-        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая. Скан, PDF</span></li>
+        <li><b class="doc">Лицензия на телематические услуги связи</b><span>№ Л030-00114-77/00061756 (до 01.03.2022 — № 159794). Выдана Роскомнадзором 31.10.2017, действует до 31.10.2027. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
+        <li><b class="doc">Лицензия на услуги передачи данных</b><span>№ Л030-00114-77/00073373 (до 01.03.2022 — № 177512). Выдана Роскомнадзором 02.10.2019, действует до 02.10.2029. Лицензиат — ИП Малов Д.С. Территория действия: Российская Федерация. Выписка из реестра от 17.11.2026: действующая.</span></li>
         <li><a href="https://rkn.gov.ru/communication/register/license/" target="_blank" rel="noopener">Реестр лицензий в области связи</a><span>Проверить сведения о лицензиях на сайте Роскомнадзора</span></li>
         <li><a href="/privacy">Политика обработки персональных данных</a><span>Редакция от 17 ноября 2026 г.</span></li>
         <li><a href="/consent">Согласие на обработку персональных данных</a><span>Для заявок с сайта</span></li>
