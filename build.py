@@ -428,8 +428,7 @@ def apply_form(source):
       <p class="muted" style="margin-top:14px">Напишите, где нужен интернет. Перезвоним, расскажем, какой тариф действует в вашем селе, и договоримся о выезде монтажников.</p>
       <p class="direct">Удобнее голосом — звоните <a href="tel:{PHONE_TEL}">{PHONE}</a></p>
     </div>
-    <form name="zayavka" method="POST" action="/spasibo" data-netlify="true" netlify-honeypot="company_site">
-      <input type="hidden" name="form-name" value="zayavka">
+    <form name="zayavka" method="POST" action="/api/zayavka">
       <input type="hidden" name="page" value="{source}">
       <p class="hp"><label>Не заполняйте <input name="company_site"></label></p>
       <div class="row2">

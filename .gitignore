@@ -1,3 +1,7 @@
 *.zip
 shot.py
 __pycache__/
+
+server/data/
+server/.env
+.env
