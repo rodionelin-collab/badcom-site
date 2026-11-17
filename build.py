@@ -145,7 +145,7 @@ p{margin:0 0 1em;max-width:68ch}
 
 /* hero */
 .hero{background:var(--taiga);color:#EAF1ED;position:relative;overflow:hidden;padding:56px 0 72px}
-.hero .wrap{display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:end;position:relative;z-index:1}
+.hero .wrap{display:grid;grid-template-columns:1fr;gap:48px;align-items:end;position:relative;z-index:1}
 .hero h1{font-size:clamp(44px,8.2vw,108px);font-weight:700;line-height:.92;letter-spacing:-.035em;color:#fff}
 .hero-logo{display:block;width:100%;max-width:640px;height:auto;color:#fff}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -160,6 +160,17 @@ p{margin:0 0 1em;max-width:68ch}
 .where h2{font-size:18px;margin-bottom:6px}
 .where p{font-size:15px;color:var(--muted);margin-bottom:14px}
 .where ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.zona{padding:48px 0 8px}
+.zona .where{background:var(--white);padding:32px 32px 28px;box-shadow:0 1px 0 #E3E9E5}
+.zona .where h2{font-size:28px;margin-bottom:8px}
+.zona .where>p{max-width:64ch}
+.zona .dlist{grid-template-columns:repeat(5,1fr);gap:4px 24px;margin-top:6px}
+.zona .dlist li{display:flex;align-items:baseline}.zona .dlist li::before{flex:none}
+.zona .wl{margin-top:22px;padding:20px 24px}
+.zona .wl h3{font-size:18px}
+.zona .wl ul{columns:4 170px;max-height:none;overflow:visible}
+.zona .wl-static{margin-top:10px;columns:2 300px;column-gap:32px}
+@media (max-width:900px){.zona .dlist{grid-template-columns:1fr 1fr}.zona .where{padding:22px 18px}}
 .where .dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline;font-size:15px;color:var(--ink);text-decoration:underline;text-decoration-color:#B9C7BF;text-underline-offset:4px}
 .where .dbtn:hover,.where .dbtn.on{color:var(--taiga);text-decoration-color:var(--signal)}
 .where .dbtn:focus-visible{outline:2px solid var(--taiga);outline-offset:3px;border-radius:4px}
@@ -710,7 +721,20 @@ def index_page():
         <a class="btn ghost" href="#tarif">Посмотреть тарифы</a>
       </div>
     </div>
-    <aside class="where" id="zona" aria-labelledby="zona-h">
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap">
+    <a href="{LK}"><b>Личный кабинет</b><span>Баланс и оплата услуг</span></a>
+    <a href="#contacts"><b>Техподдержка</b><span>{PHONE}, Telegram и MAX</span></a>
+    <a href="{TG}" target="_blank" rel="noopener"><b>Новости в Telegram</b><span>Работы на линии и объявления</span></a>
+  </div>
+</div>
+
+    <section class="zona" id="zona" aria-labelledby="zona-h">
+  <div class="wrap">
+  <div class="where">
       <h2 id="zona-h">Где мы работаем</h2>
       <p>Подключаем в населённых пунктах этих районов. Нажмите на район, чтобы увидеть список. Не нашли свой — всё равно оставьте заявку, проверим.</p>
       <ul class="dlist" hidden>{dist}</ul>
@@ -740,17 +764,9 @@ def index_page():
         }});
       }})();
       </script>
-    </aside>
+  </div>
   </div>
 </section>
-
-<div class="strip">
-  <div class="wrap">
-    <a href="{LK}"><b>Личный кабинет</b><span>Баланс и оплата услуг</span></a>
-    <a href="#contacts"><b>Техподдержка</b><span>{PHONE}, Telegram и MAX</span></a>
-    <a href="{TG}" target="_blank" rel="noopener"><b>Новости в Telegram</b><span>Работы на линии и объявления</span></a>
-  </div>
-</div>
 
 <section id="tarif">
   <div class="wrap">
