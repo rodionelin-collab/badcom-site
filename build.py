@@ -263,6 +263,7 @@ section{padding:72px 0}
 .dl tbody th{font-weight:700;color:var(--ink)}
 .dl tbody tr:last-child th,.dl tbody tr:last-child td{border-bottom:0}
 .dl td:last-child{color:var(--taiga)}
+.dl tr.grp th{text-align:left;padding:18px 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
 .dl-note{font-size:14px;color:var(--muted);margin:14px 0 0}
 @media (max-width:640px){.dl{padding:22px 18px}.dl th:nth-child(2),.dl td:nth-child(2){display:none}.dl th,.dl td{padding:11px 6px;font-size:15px}.dl thead th{font-size:13px;white-space:normal}.dl td:last-child b{white-space:nowrap}}
 .cond{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
@@ -507,6 +508,34 @@ def download_block(rows):
     <tbody>{"".join(body)}</tbody>
   </table></div>
   <p class="dl-note">* Расчёт без накладных расходов. На практике скорость делится между всеми устройствами в доме и зависит от загруженности сайта, с которого вы качаете, поэтому файл может скачиваться дольше.</p>
+</div>"""
+
+def _dl_row(name, speed):
+    """speed: «до 1/1 Мбит/с» или «до 5 Мбит/с»; считаем по скачиванию."""
+    v = speed.replace("до ", "").split(" ")[0].split("/")[0]
+    mbit = float(v)
+    return (f'<tr><th scope="row">{name}</th><td>до {_num(mbit)}</td>'
+            f'<td>до {_num(mbit / 8)}</td><td><b>от {_dur(800 / mbit)}</b></td></tr>')
+
+def download_block_sat(groups, surf_after=True):
+    """Пояснение для спутниковых тарифов. groups: [(заголовок, rows)]."""
+    body = []
+    for title, rows in groups:
+        body.append(f'<tr class="grp"><th colspan="4" scope="colgroup">{title}</th></tr>')
+        for r in rows:
+            body.append(_dl_row(r["name"], r["speed"]))
+    slow = ""
+    if surf_after:
+        slow = (" Если у «Серфинга» (кроме Серфинг-350) закончился суточный лимит, скорость снижается до 64&nbsp;Кбит/с, и файл 100&nbsp;Мбайт "
+                "скачивается около 3\u00a0ч 28\u00a0мин. Поэтому большие файлы лучше качать в начале суток.")
+    return f"""<div class="dl">
+  <h3>За сколько скачается файл 100&nbsp;Мбайт</h3>
+  <p class="muted">Скорость тарифа указана в мегабитах в секунду, а размер файлов обычно считают в мегабайтах. В одном байте 8&nbsp;бит, поэтому файл скачивается в 8 раз «медленнее», чем кажется по цифре тарифа. Файл 100&nbsp;Мбайт также уменьшит остаток вашего пакета трафика на 100&nbsp;Мбайт.</p>
+  <div class="dl-scroll"><table>
+    <thead><tr><th>Тариф</th><th>Скорость, Мбит/с</th><th>Загрузка, Мбайт/с</th><th>Файл 100&nbsp;Мбайт*</th></tr></thead>
+    <tbody>{"".join(body)}</tbody>
+  </table></div>
+  <p class="dl-note">* Расчёт при максимальной скорости тарифа и без накладных расходов. Через спутник скорость зависит от погоды и загруженности канала, поэтому файл может скачиваться дольше.{slow}</p>
 </div>"""
 
 def vol_table(rows):
@@ -949,6 +978,7 @@ pages = {
         '<h3 class="plans-cap" style="margin-top:0">Пакет на месяц</h3>' + vol_table(SAT_VOL)
         + '<h3 class="plans-cap">Пакет на сутки — «Серфинг»</h3>' + surf_table(SAT_SURF)
         + '<h3 class="plans-cap">Опции «Турбо»</h3><p class="muted">Докупаются к любому тарифу, когда трафик закончился.</p>' + turbo_table()
+        + download_block_sat([("Пакет на месяц", SAT_VOL), ("Серфинг", SAT_SURF)])
         + COND_PRIVATE,
         "Тарифная зона «Спутник» — Плохая Компания", "Спутник"),
     "tariff_biz": tariff_page(
@@ -961,6 +991,7 @@ pages = {
         "Спутниковый интернет для ООО и ИП. Пакеты трафика на месяц или на сутки, постоплата по счёту.",
         '<h3 class="plans-cap" style="margin-top:0">Пакет на месяц</h3>' + vol_table(SATB_VOL)
         + '<h3 class="plans-cap">Пакет на сутки — «Серфинг»</h3>' + surf_table(SATB_SURF, turbo=False)
+        + download_block_sat([("Пакет на месяц", SATB_VOL), ("Серфинг", SATB_SURF)])
         + COND_BIZ_SAT,
         "Тарифная зона «Спутник» для юридических лиц — Плохая Компания", "Спутник юрлица"),
 }
