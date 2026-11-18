@@ -161,6 +161,20 @@ section{padding:72px 0}
 .plans-cap{font-family:"Unbounded",sans-serif;font-size:17px;font-weight:600;margin:36px 0 12px}
 
 /* conditions */
+.dl{background:var(--white);border-radius:var(--r-m);padding:26px 28px;margin-top:20px}
+.dl h3{margin-bottom:8px}
+.dl .muted{font-size:16px;margin:0 0 16px;max-width:70ch}
+.dl-scroll{overflow-x:auto}
+.dl table{width:100%;border-collapse:collapse;font-size:16px}
+.dl th,.dl td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.dl thead th{font-size:14px;color:var(--muted);font-weight:600;border-bottom:2px solid var(--ink)}
+.dl th:first-child,.dl td:first-child{text-align:left;padding-left:0}
+.dl th:last-child,.dl td:last-child{padding-right:0}
+.dl tbody th{font-weight:700;color:var(--ink)}
+.dl tbody tr:last-child th,.dl tbody tr:last-child td{border-bottom:0}
+.dl td:last-child{color:var(--taiga)}
+.dl-note{font-size:14px;color:var(--muted);margin:14px 0 0}
+@media (max-width:640px){.dl{padding:22px 18px}.dl th:nth-child(2),.dl td:nth-child(2){display:none}.dl th,.dl td{padding:11px 6px;font-size:15px}.dl thead th{font-size:13px;white-space:normal}.dl td:last-child b{white-space:nowrap}}
 .cond{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
 .note{background:var(--white);border-radius:var(--r-m);padding:26px 28px}
 .note h3{margin-bottom:10px}
@@ -367,6 +381,14 @@ footer .linkbtn{color:#D5E1DA}
   <div class="det">Безлимит. Скачивание и отдача — <b>до 20 Мбит/с</b><div class="bar" aria-hidden="true"><i style="width:100%"></i></div></div>
   <div class="pr">9 500 ₽<small>в месяц</small></div>
 </div>
+</div><div class="dl">
+  <h3>За сколько скачается файл 100&nbsp;Мбайт</h3>
+  <p class="muted">Скорость тарифа указана в мегабитах в секунду, а размер файлов обычно считают в мегабайтах. В одном байте 8&nbsp;бит, поэтому файл скачивается в 8 раз «медленнее», чем кажется по цифре тарифа.</p>
+  <div class="dl-scroll"><table>
+    <thead><tr><th>Тариф</th><th>Скорость, Мбит/с</th><th>Загрузка, Мбайт/с</th><th>Файл 100&nbsp;Мбайт*</th></tr></thead>
+    <tbody><tr><th scope="row">512/512</th><td>512 Кбит/с</td><td>0,064</td><td><b>26 мин 2 с</b></td></tr><tr><th scope="row">1 Мегабит</th><td>1 Мбит/с</td><td>0,125</td><td><b>13 мин 20 с</b></td></tr><tr><th scope="row">2 Мегабита</th><td>2 Мбит/с</td><td>0,25</td><td><b>6 мин 40 с</b></td></tr><tr><th scope="row">5 Мегабит</th><td>5 Мбит/с</td><td>0,625</td><td><b>2 мин 40 с</b></td></tr><tr><th scope="row">10 Мегабит</th><td>10 Мбит/с</td><td>1,25</td><td><b>1 мин 20 с</b></td></tr><tr><th scope="row">Максимум</th><td>20 Мбит/с</td><td>до 2,5</td><td><b>от 40 с</b></td></tr></tbody>
+  </table></div>
+  <p class="dl-note">* Расчёт без накладных расходов. На практике скорость делится между всеми устройствами в доме и зависит от загруженности сайта, с которого вы качаете, поэтому файл может скачиваться дольше.</p>
 </div><div class="cond">
   <div class="note">
     <h3>Подключение</h3>

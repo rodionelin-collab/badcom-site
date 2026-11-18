@@ -251,6 +251,20 @@ section{padding:72px 0}
 .plans-cap{font-family:"Unbounded",sans-serif;font-size:17px;font-weight:600;margin:36px 0 12px}
 
 /* conditions */
+.dl{background:var(--white);border-radius:var(--r-m);padding:26px 28px;margin-top:20px}
+.dl h3{margin-bottom:8px}
+.dl .muted{font-size:16px;margin:0 0 16px;max-width:70ch}
+.dl-scroll{overflow-x:auto}
+.dl table{width:100%;border-collapse:collapse;font-size:16px}
+.dl th,.dl td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.dl thead th{font-size:14px;color:var(--muted);font-weight:600;border-bottom:2px solid var(--ink)}
+.dl th:first-child,.dl td:first-child{text-align:left;padding-left:0}
+.dl th:last-child,.dl td:last-child{padding-right:0}
+.dl tbody th{font-weight:700;color:var(--ink)}
+.dl tbody tr:last-child th,.dl tbody tr:last-child td{border-bottom:0}
+.dl td:last-child{color:var(--taiga)}
+.dl-note{font-size:14px;color:var(--muted);margin:14px 0 0}
+@media (max-width:640px){.dl{padding:22px 18px}.dl th:nth-child(2),.dl td:nth-child(2){display:none}.dl th,.dl td{padding:11px 6px;font-size:15px}.dl thead th{font-size:13px;white-space:normal}.dl td:last-child b{white-space:nowrap}}
 .cond{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
 .note{background:var(--white);border-radius:var(--r-m);padding:26px 28px}
 .note h3{margin-bottom:10px}
@@ -459,6 +473,41 @@ def unlim_table(rows):
 </div>""")
     out.append("</div>")
     return "\n".join(out)
+
+def _num(x):
+    t = f"{x:.3f}".rstrip("0").rstrip(".")
+    return t.replace(".", ",")
+
+def _dur(sec):
+    sec = round(sec)
+    m, c = divmod(sec, 60)
+    if m and c:
+        return f"{m}\u00a0мин {c}\u00a0с"
+    return f"{m}\u00a0мин" if m else f"{c}\u00a0с"
+
+def download_block(rows):
+    """Пояснение: за сколько скачивается файл 100 Мбайт на каждом тарифе."""
+    body = []
+    for r in rows:
+        sp = r["speed"]
+        upto = sp.startswith("до ")
+        v = sp.replace("до ", "")
+        num, unit = v.split(" ", 1)
+        mbit = float(num) / 1000 if unit.startswith("Кбит") else float(num)
+        mbyte = mbit / 8
+        sec = 800 / mbit
+        a = "до " if upto else ""
+        b = "от " if upto else ""
+        body.append(f'<tr><th scope="row">{r["name"]}</th><td>{html.escape(v)}</td><td>{a}{_num(mbyte)}</td><td><b>{b}{_dur(sec)}</b></td></tr>')
+    return f"""<div class="dl">
+  <h3>За сколько скачается файл 100&nbsp;Мбайт</h3>
+  <p class="muted">Скорость тарифа указана в мегабитах в секунду, а размер файлов обычно считают в мегабайтах. В одном байте 8&nbsp;бит, поэтому файл скачивается в 8 раз «медленнее», чем кажется по цифре тарифа.</p>
+  <div class="dl-scroll"><table>
+    <thead><tr><th>Тариф</th><th>Скорость, Мбит/с</th><th>Загрузка, Мбайт/с</th><th>Файл 100&nbsp;Мбайт*</th></tr></thead>
+    <tbody>{"".join(body)}</tbody>
+  </table></div>
+  <p class="dl-note">* Расчёт без накладных расходов. На практике скорость делится между всеми устройствами в доме и зависит от загруженности сайта, с которого вы качаете, поэтому файл может скачиваться дольше.</p>
+</div>"""
 
 def vol_table(rows):
     out = ['<div class="plans">']
@@ -828,6 +877,7 @@ def index_page():
     </div>
     {tabs('index')}
     {unlim_table(BASE)}
+    {download_block(BASE)}
     {COND_PRIVATE}
     <div class="callout"><p>В особо удалённых сёлах действуют тарифы <a href="/tariff_zone2">«х2»</a> или <a href="/tariff_sputnik">«Спутник»</a>. Перед подключением уточните у нас, какой тариф работает в вашем населённом пункте.</p></div>
   </div>
@@ -891,7 +941,7 @@ pages = {
     "tariff_zone2": tariff_page(
         "tariff_zone2", "Тарифная зона «х2»",
         "Для особо удалённых сёл. Полный безлимит, скорость одинаковая в обе стороны.",
-        unlim_table(X2) + COND_PRIVATE,
+        unlim_table(X2) + download_block(X2) + COND_PRIVATE,
         "Тарифная зона «х2» — Плохая Компания", "Зона х2"),
     "tariff_sputnik": tariff_page(
         "tariff_sputnik", "Тарифная зона «Спутник»",
@@ -904,7 +954,7 @@ pages = {
     "tariff_biz": tariff_page(
         "tariff_biz", "Тарифы для юрлиц",
         "Для ООО и ИП. Полный безлимит, постоплата по счёту.",
-        unlim_table(BIZ) + COND_BIZ_RADIO,
+        unlim_table(BIZ) + download_block(BIZ) + COND_BIZ_RADIO,
         "Тарифы для юридических лиц — Плохая Компания", "Юрлица"),
     "tariff_sputnik_biz": tariff_page(
         "tariff_sputnik_biz", "«Спутник» для юрлиц",
