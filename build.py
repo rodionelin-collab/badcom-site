@@ -775,7 +775,7 @@ def index_page():
     <div class="hero-side">
       <aside class="hero-card" aria-label="Для абонентов">
         <h2>Уже подключены?</h2>
-        <a class="hc" href="tel:{PHONE_TEL}"><b>{PHONE}</b><span>Техподдержка: будни 8:00–22:00, выходные 9:00–22:00</span><i>→</i></a>
+        <a class="hc" href="#contacts"><b>{PHONE}</b><span>Техподдержка: будни 8:00–22:00, выходные 9:00–22:00</span><i>→</i></a>
         <a class="hc" href="#pay"><b>Как пополнить баланс</b><span>Картой в кабинете, Сбербанк Онлайн, почта, банк</span><i>→</i></a>
         <a class="hc" href="{MAX_NEWS}" target="_blank" rel="noopener"><b>Работы на линии</b><span>Новости и объявления в MAX</span><i>→</i></a>
       </aside>
