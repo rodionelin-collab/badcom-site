@@ -38,14 +38,18 @@ p{margin:0 0 1em;max-width:68ch}
 /* header */
 .top{background:var(--taiga);color:#E6EEE9}
 .top .wrap{display:flex;align-items:center;gap:20px;min-height:72px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
-.mark{display:flex;flex-direction:column;text-decoration:none;line-height:1.05;margin-right:auto}
+.mark{display:flex;flex-direction:column;text-decoration:none;line-height:1.05;margin-right:auto;white-space:nowrap}
 .mark b{font-family:"Unbounded",sans-serif;font-weight:700;font-size:19px;color:#fff}
 .mark small{font-size:12px;color:#A9BDB2;letter-spacing:.04em}
-.nav{display:flex;gap:16px;flex-wrap:wrap}
+.nav{display:flex;gap:14px;flex-wrap:wrap}
 @media (min-width:901px){.top .wrap{flex-wrap:nowrap}.nav{flex-wrap:nowrap;white-space:nowrap}}
 .nav a{text-decoration:none;font-size:15px;color:#D5E1DA}
 .nav a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
 .top .tel{font-weight:600;text-decoration:none;color:#fff;white-space:nowrap}
+.top .tel .ic{display:none;width:44px;height:44px;padding:11px;border-radius:50%;box-shadow:inset 0 0 0 2px #5C8A75;box-sizing:border-box}
+@media (min-width:901px){.top{position:sticky;top:0;z-index:30;box-shadow:0 1px 0 rgba(255,255,255,.06)}}
+html{scroll-padding-top:84px}
+@media (max-width:900px){html{scroll-padding-top:12px}}
 .btn{display:inline-flex;align-items:center;gap:8px;font:600 16px/1 "Golos Text",system-ui,sans-serif;text-decoration:none;border:0;cursor:pointer;
   padding:14px 20px;border-radius:var(--r-s);white-space:nowrap;background:var(--signal);color:var(--signal-ink)}
 .btn:hover{background:#FFC820}
@@ -54,14 +58,28 @@ p{margin:0 0 1em;max-width:68ch}
 .top .btn{padding:11px 16px;font-size:15px}
 
 /* hero */
-.hero{background:var(--taiga);color:#EAF1ED;position:relative;overflow:hidden;padding:56px 0 72px}
-.hero .wrap{display:grid;grid-template-columns:1fr;gap:48px;align-items:end;position:relative;z-index:1}
+.hero{background:var(--taiga);color:#EAF1ED;position:relative;overflow:hidden;padding:40px 0 56px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start;position:relative;z-index:1}
+.hero-main{align-self:center}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:26px}
+.hero-side h1{margin:0;line-height:0}
+.hero-statement{font-family:"Unbounded",sans-serif;font-weight:500;font-size:clamp(24px,2.4vw,32px);line-height:1.22;letter-spacing:-.02em;color:#fff;margin:0 0 30px;max-width:24ch}
 .hero h1{font-size:clamp(44px,8.2vw,108px);font-weight:700;line-height:.92;letter-spacing:-.035em;color:#fff}
-.hero-logo{display:block;width:100%;max-width:640px;height:auto;color:#fff}
+.hero-logo{display:block;width:280px;max-width:60vw;height:auto;color:#fff}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .hero .lede{font-size:clamp(18px,2vw,21px);margin:28px 0 30px;color:#D3DFD8;max-width:34ch}
+.hero-card{align-self:stretch;background:var(--white);color:var(--ink);border-radius:var(--r-m);padding:8px 22px 6px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.hero-card h2{font-size:14px;font-family:"Golos Text",system-ui,sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:14px 0 6px}
+.hc{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 12px;padding:13px 0;border-top:1px solid var(--line);text-decoration:none;color:inherit}
+.hc b{font-size:17px}
+.hc span{grid-column:1;font-size:14px;color:var(--muted)}
+.hc i{grid-column:2;grid-row:1/3;font-style:normal;font-size:20px;color:var(--taiga)}
+.hc:hover b{text-decoration:underline;text-underline-offset:4px}
+.hc.main{border-top:0}
+.hc.main b{display:inline-block;background:var(--signal);color:var(--signal-ink);padding:9px 16px;border-radius:var(--r-s);font-size:16px}
+.hc.main i{display:none}
 .hero .actions{display:flex;gap:12px;flex-wrap:wrap}
-.waves{position:absolute;right:-120px;top:-60px;width:760px;height:760px;opacity:.5;pointer-events:none}
+.waves{position:absolute;right:-260px;top:-330px;width:760px;height:760px;opacity:.45;pointer-events:none}
 .waves circle{fill:none;stroke:#3F6A57;stroke-width:1.5}
 .waves .pulse{stroke:var(--signal);stroke-width:2;opacity:0;animation:ping 4.5s ease-out 1}
 .waves .pulse:nth-of-type(2){animation-delay:.35s}.waves .pulse:nth-of-type(3){animation-delay:.7s}
@@ -149,6 +167,9 @@ section{padding:72px 0}
 
 /* faq */
 .faq{max-width:840px}
+.faq.faq-cols{max-width:none;display:grid;grid-template-columns:1fr 1fr;gap:0 56px;align-items:start}
+.faq-col h3{font-size:18px;margin:0 0 10px}
+.faq-col details:first-of-type{border-top:1px solid var(--line)}
 .faq details{border-top:1px solid var(--line)}
 .faq details:last-child{border-bottom:1px solid var(--line)}
 .faq summary{cursor:pointer;list-style:none;padding:20px 40px 20px 0;font-weight:600;font-size:18px;position:relative}
@@ -216,7 +237,15 @@ footer a{color:#D5E1DA}
 
 @media (max-width:900px){
   .hero .wrap,.apply .wrap,.contacts .wrap,.cond{grid-template-columns:1fr}
-  .waves{width:520px;height:520px;right:-200px}
+  .hero .wrap{gap:28px}
+  .faq.faq-cols{grid-template-columns:1fr;gap:32px}
+  .hero-side{display:contents}
+  .hero-side h1{order:1;justify-self:end}
+  .hero-main{order:2}
+  .hero-card{order:3}
+  .hero-logo{width:150px}
+  .hero-statement{max-width:none}
+  .waves{width:520px;height:520px;right:-200px;top:-200px}
   .nav{order:3;width:100%;gap:14px}
   .strip .wrap{grid-template-columns:1fr}
   .strip a,.strip a:first-child{border-left:0;border-top:1px solid var(--line);padding:16px 0}
@@ -231,7 +260,18 @@ footer a{color:#D5E1DA}
   .plan .pr{grid-row:1;grid-column:2}
   .where ul{grid-template-columns:1fr}
   .row2{grid-template-columns:1fr}
-  .top .tel{display:none}
+  .top .wrap{gap:8px 10px;min-height:0;padding-top:12px;padding-bottom:6px;flex-wrap:wrap}
+  .mark b{font-size:14px}
+  .top .wrap{gap:8px 6px}
+  .top .btn{padding:10px 9px;font-size:13px}
+  .top .tel .ic{width:40px;height:40px;padding:10px}
+  .top .tel span{display:none}
+  .top .tel .ic{display:block}
+  .nav{overflow-x:auto;white-space:nowrap;flex-wrap:nowrap;margin:0 -16px;padding:4px 16px 6px;scrollbar-width:none}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{padding:6px 2px;font-size:15px}
+  .hero{padding:24px 0 40px}
+  .hero-card{padding:6px 18px 4px}
   .req dl{grid-template-columns:1fr}
   .req dd{margin-bottom:6px}
 }
@@ -274,11 +314,12 @@ footer .linkbtn{color:#D5E1DA}
     <nav class="nav" aria-label="Разделы">
       <a href="/#tarif">Тарифы</a>
       <a href="/#zona">Где работаем</a>
+      <a href="/#pay">Как оплатить</a>
       <a href="/#faq">Вопросы</a>
       <a href="#contacts">Контакты</a>
-      <a href="https://t.me/badcom_news" target="_blank" rel="noopener">Канал в Telegram</a>
+      <a href="https://t.me/badcom_news" target="_blank" rel="noopener">Telegram</a>
     </nav>
-    <a class="tel" href="tel:+73952798567">+7 (3952) 798-567</a>
+    <a class="tel" href="tel:+73952798567" aria-label="Позвонить: +7 (3952) 798-567"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>+7 (3952) 798-567</span></a>
     <a class="btn" href="http://lk.badcom.ru/">Личный кабинет</a>
   </div>
 </header>
