@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /spasibo
+
+Sitemap: https://www.badcom.ru/sitemap.xml

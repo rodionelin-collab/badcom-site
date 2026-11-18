@@ -406,8 +406,12 @@ def font_face():
     return css
 FONT_FACE = font_face()
 
+SITE_URL = "https://www.badcom.ru"
+NOINDEX = ("spasibo", "404")
+
 def head(title, desc, slug):
-    canon = "https://badcom.ru" + ("" if slug == "index" else f"/{slug}")
+    canon = SITE_URL + ("" if slug == "index" else f"/{slug}")
+    robots = '<meta name="robots" content="noindex">\n' if slug in NOINDEX else ""
     return f"""<!doctype html>
 <html lang="ru">
 <head>
@@ -421,7 +425,7 @@ def head(title, desc, slug):
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
-<meta property="og:title" content="{html.escape(title)}">
+{robots}<meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
 <meta property="og:url" content="{canon}">
 <meta property="og:type" content="website">
@@ -1032,4 +1036,22 @@ for slug, content in pages.items():
         f.write(content)
 with open(os.path.join(OUT, "spasibo.html"), "w", encoding="utf-8") as f:
     f.write(THANKS)
+
+NOT_FOUND = head("Страница не найдена — Плохая Компания", "Такой страницы нет.", "404") + header("404") + f"""
+<main id="main">
+<div class="phead"><div class="wrap"><h1>Страницы нет</h1><p>Возможно, ссылка устарела или в адресе опечатка.</p></div></div>
+<section><div class="wrap"><p><a class="btn" href="/">На главную</a> &nbsp; <a class="btn ghost dark" href="/#tarif">Тарифы</a></p><p>Если нужна помощь — звоните <a href="tel:{PHONE_TEL}">{PHONE}</a>.</p></div></section>
+<span id="contacts"></span>
+</main>
+{FOOTER}"""
+with open(os.path.join(OUT, "404.html"), "w", encoding="utf-8") as f:
+    f.write(NOT_FOUND)
+
+# robots.txt и sitemap.xml
+with open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8") as f:
+    f.write(f"User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /spasibo\n\nSitemap: {SITE_URL}/sitemap.xml\n")
+urls = [SITE_URL + "/"] + [f"{SITE_URL}/{k}" for k in pages if k != "index"]
+with open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8") as f:
+    f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + "".join(f"  <url><loc>{u}</loc></url>\n" for u in urls) + "</urlset>\n")
 print("ok", sorted(os.listdir(OUT)))
