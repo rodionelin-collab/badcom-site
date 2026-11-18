@@ -14,6 +14,7 @@ SUPPORT_TEL = "+79397939714"
 EMAIL = "info@badcom.ru"
 LK = "http://lk.badcom.ru/"
 TG = "https://t.me/badcom_news"
+MAX_NEWS = "https://max.ru/join/XAXjnlNrrLzhJx-er5I15L_bUsMX1Jy7rJkCYFIokds"
 
 DISTRICTS = ["Аларский", "Боханский", "Жигаловский", "Заларинский", "Зиминский",
              "Казачинско-Ленский", "Качугский", "Усольский", "Усть-Удинский", "Черемховский"]
@@ -163,7 +164,7 @@ html{scroll-padding-top:84px}
 .hc span{grid-column:1;font-size:14px;color:var(--muted)}
 .hc i{grid-column:2;grid-row:1/3;font-style:normal;font-size:20px;color:var(--taiga)}
 .hc:hover b{text-decoration:underline;text-underline-offset:4px}
-.hc.main{border-top:0}
+.hero-card h2+.hc{border-top:0}
 .hc.main b{display:inline-block;background:var(--signal);color:var(--signal-ink);padding:9px 16px;border-radius:var(--r-s);font-size:16px}
 .hc.main i{display:none}
 .hero .actions{display:flex;gap:12px;flex-wrap:wrap}
@@ -765,10 +766,9 @@ def index_page():
     <div class="hero-side">
       <aside class="hero-card" aria-label="Для абонентов">
         <h2>Уже подключены?</h2>
-        <a class="hc main" href="{LK}"><b>Личный кабинет</b><span>Баланс, оплата, смена тарифа</span></a>
         <a class="hc" href="tel:{PHONE_TEL}"><b>{PHONE}</b><span>Техподдержка: будни 8:00–22:00, выходные 9:00–22:00</span><i>→</i></a>
         <a class="hc" href="#pay"><b>Как пополнить баланс</b><span>Картой в кабинете, Сбербанк Онлайн, почта, банк</span><i>→</i></a>
-        <a class="hc" href="{TG}" target="_blank" rel="noopener"><b>Работы на линии</b><span>Новости и объявления в Telegram</span><i>→</i></a>
+        <a class="hc" href="{MAX_NEWS}" target="_blank" rel="noopener"><b>Работы на линии</b><span>Новости и объявления в MAX</span><i>→</i></a>
       </aside>
     </div>
   </div>
