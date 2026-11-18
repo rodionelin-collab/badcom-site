@@ -155,7 +155,9 @@ html{scroll-padding-top:84px}
 
 /* hero */
 .hero{background:var(--taiga);color:#EAF1ED;position:relative;overflow:hidden;padding:64px 0 56px}
-.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:start;position:relative;z-index:1}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:stretch;position:relative;z-index:1}
+.hero-side{display:flex;flex-direction:column}
+.hero-side .hero-card{flex:1;display:flex;flex-direction:column;justify-content:space-between}
 .hero-main h1{margin:0}
 .hero-statement{font-family:"Unbounded",sans-serif;font-weight:700;font-size:clamp(24px,2.4vw,32px);line-height:1.22;letter-spacing:-.02em;color:#fff;margin:0 0 18px;max-width:22ch}
 .hero h1{font-size:clamp(44px,8.2vw,108px);font-weight:700;line-height:.92;letter-spacing:-.035em;color:#fff}
