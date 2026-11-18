@@ -351,13 +351,13 @@ footer .linkbtn{color:#D5E1DA}
 <thead><tr><th>Группа</th><th>Зачем</th><th>Что именно</th><th>Срок</th><th>Согласие</th></tr></thead>
 <tbody>
 <tr><td>Необходимые</td><td>Запомнить ваш выбор в уведомлении о cookie, чтобы не показывать его при каждом визите</td><td>Запись <code>badcom_cookie_choice</code> в локальном хранилище браузера</td><td>12 месяцев</td><td>Не требуется: без неё Сайт не сможет выполнить вашу настройку</td></tr>
-<tr><td>Аналитические</td><td>Считать посещения и понимать, какие страницы полезны</td><td>На Сайте сейчас не используются</td><td>—</td><td>Включим только после вашего согласия</td></tr>
+<tr><td>Аналитические</td><td>Считать посещения и понимать, какие страницы и разделы полезны</td><td>Счётчик «Яндекс.Метрика» (ООО «Яндекс»): служебные файлы cookie с идентификатором посетителя (<code>_ym_*</code>), сведения о посещённых страницах, источнике перехода, типе устройства и браузера. Вебвизор и запись действий на странице не используются</td><td>До 12 месяцев</td><td>Нужно: счётчик включается только после нажатия «Принять все»</td></tr>
 <tr><td>Рекламные</td><td>Показывать рекламу</td><td>На Сайте не используются</td><td>—</td><td>Включим только после вашего согласия</td></tr>
 </tbody></table></div>
-<p>Если мы подключим счётчики аналитики или рекламные сервисы, мы обновим эту политику и они заработают только после того, как вы нажмёте «Принять все».</p>
+<p>Если мы подключим другие счётчики аналитики или рекламные сервисы, мы обновим эту политику, и они заработают только после того, как вы нажмёте «Принять все».</p>
 
 <h2>3. Сторонние ресурсы</h2>
-<p>Сайт не загружает шрифты, счётчики и иные ресурсы со сторонних серверов: всё необходимое для его работы размещено на сервере Оператора.</p>
+<p>Шрифты и всё необходимое для работы Сайта размещено на сервере Оператора. Единственный сторонний ресурс — счётчик «Яндекс.Метрика»: он загружается с серверов Яндекса только после того, как вы нажали «Принять все». Если вы выбрали «Только необходимые», счётчик не загружается.</p>
 <p>Ссылки на личный кабинет, Telegram, MAX и сервис проверки скорости ведут на сторонние сайты. Их cookie регулируются правилами этих сайтов.</p>
 
 <h2>4. Как управлять cookie</h2>
@@ -434,12 +434,28 @@ footer .linkbtn{color:#D5E1DA}
   function read(){try{var v=JSON.parse(localStorage.getItem(KEY));if(v&&v.ts&&Date.now()-v.ts<TTL)return v}catch(e){}return null}
   function save(a){try{localStorage.setItem(KEY,JSON.stringify({v:1,analytics:a,ts:Date.now()}))}catch(e){}}
   var st=read();
-  /* Любой счётчик аналитики или рекламы подключать только после проверки: if(window.badcomCookie.analytics){...} */
   window.badcomCookie={analytics:!!(st&&st.analytics)};
+  /* Счётчики запускаются только после согласия и только на боевом домене badcom.ru */
+  var YM='114330635', GA='';
+  function loadAnalytics(){
+    if(window.__bcA||!/(^|\.)badcom\.ru$/.test(location.hostname))return;
+    window.__bcA=1;
+    if(YM){
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+YM,'ym');
+      window.ym(YM,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+    }
+    if(GA){
+      var g=document.createElement('script');g.async=1;g.src='https://www.googletagmanager.com/gtag/js?id='+GA;document.head.appendChild(g);
+      window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};
+      window.gtag('js',new Date());window.gtag('config',GA,{anonymize_ip:true});
+    }
+  }
+  if(window.badcomCookie.analytics)loadAnalytics();
   if(!st&&box)box.hidden=false;
   if(box){box.addEventListener('click',function(e){
     var b=e.target.closest('[data-ck]');if(!b)return;
     var a=b.getAttribute('data-ck')==='all';save(a);window.badcomCookie.analytics=a;box.hidden=true;
+    if(a)loadAnalytics();
     document.dispatchEvent(new CustomEvent('badcom-cookie-choice',{detail:{analytics:a}}));
   });}
   document.addEventListener('click',function(e){
@@ -448,6 +464,7 @@ footer .linkbtn{color:#D5E1DA}
   var f=document.querySelector('form[name="zayavka"]');
   if(f){f.addEventListener('submit',function(){
     var t=f.querySelector('[name="consent_time"]');if(t)t.value=new Date().toISOString();
+    try{if(window.ym&&YM)window.ym(YM,'reachGoal','zayavka');if(window.gtag&&GA)window.gtag('event','generate_lead');}catch(e){}
   });}
 })();
 </script>

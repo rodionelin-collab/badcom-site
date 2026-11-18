@@ -629,12 +629,28 @@ footer .linkbtn{color:#D5E1DA}
   function read(){try{var v=JSON.parse(localStorage.getItem(KEY));if(v&&v.ts&&Date.now()-v.ts<TTL)return v}catch(e){}return null}
   function save(a){try{localStorage.setItem(KEY,JSON.stringify({v:1,analytics:a,ts:Date.now()}))}catch(e){}}
   var st=read();
-  /* Любой счётчик аналитики или рекламы подключать только после проверки: if(window.badcomCookie.analytics){...} */
   window.badcomCookie={analytics:!!(st&&st.analytics)};
+  /* Счётчики запускаются только после согласия и только на боевом домене badcom.ru */
+  var YM='114330635', GA='';
+  function loadAnalytics(){
+    if(window.__bcA||!/(^|\.)badcom\.ru$/.test(location.hostname))return;
+    window.__bcA=1;
+    if(YM){
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id='+YM,'ym');
+      window.ym(YM,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true});
+    }
+    if(GA){
+      var g=document.createElement('script');g.async=1;g.src='https://www.googletagmanager.com/gtag/js?id='+GA;document.head.appendChild(g);
+      window.dataLayer=window.dataLayer||[];window.gtag=function(){window.dataLayer.push(arguments)};
+      window.gtag('js',new Date());window.gtag('config',GA,{anonymize_ip:true});
+    }
+  }
+  if(window.badcomCookie.analytics)loadAnalytics();
   if(!st&&box)box.hidden=false;
   if(box){box.addEventListener('click',function(e){
     var b=e.target.closest('[data-ck]');if(!b)return;
     var a=b.getAttribute('data-ck')==='all';save(a);window.badcomCookie.analytics=a;box.hidden=true;
+    if(a)loadAnalytics();
     document.dispatchEvent(new CustomEvent('badcom-cookie-choice',{detail:{analytics:a}}));
   });}
   document.addEventListener('click',function(e){
@@ -643,6 +659,7 @@ footer .linkbtn{color:#D5E1DA}
   var f=document.querySelector('form[name="zayavka"]');
   if(f){f.addEventListener('submit',function(){
     var t=f.querySelector('[name="consent_time"]');if(t)t.value=new Date().toISOString();
+    try{if(window.ym&&YM)window.ym(YM,'reachGoal','zayavka');if(window.gtag&&GA)window.gtag('event','generate_lead');}catch(e){}
   });}
 })();
 </script>
