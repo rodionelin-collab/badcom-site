@@ -6,6 +6,9 @@ import legal
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "site")
 os.makedirs(OUT, exist_ok=True)
+import shutil as _sh
+for _f in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")):
+    _sh.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", _f), os.path.join(OUT, _f))
 
 PHONE = "+7 (3952) 798-567"
 PHONE_TEL = "+73952798567"
@@ -394,6 +397,11 @@ def head(title, desc, slug):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1E3A2F">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32 48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(desc)}">
 <link rel="canonical" href="{canon}">
