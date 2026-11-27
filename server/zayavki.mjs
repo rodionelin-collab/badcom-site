@@ -10,6 +10,7 @@
 //     как указано в Согласии на обработку персональных данных.
 
 import http from "node:http";
+import https from "node:https";
 import net from "node:net";
 import tls from "node:tls";
 import fs from "node:fs";
@@ -35,6 +36,8 @@ const cfg = {
   mailTo: env("MAIL_TO", "info@badcom.ru"),
   tgToken: env("TG_BOT_TOKEN"),
   tgChat: env("TG_CHAT_ID"),
+  tgApi: env("TG_API_BASE", "https://api.telegram.org").replace(/\/+$/, ""), // можно указать свой шлюз/зеркало вместо api.telegram.org
+  tgProxy: env("TG_PROXY"), // http://[логин:пароль@]хост:порт — HTTP-прокси (метод CONNECT). Пусто — напрямую
   tgFull: env("TG_FULL", "false") === "true", // true — отправлять в Telegram имя, телефон и адрес (см. README: это передача данных за границу)
   thanksUrl: env("THANKS_URL", "/spasibo"),
 };
@@ -134,15 +137,49 @@ function smtpSend({ from, to, subject, text }) {
 }
 
 // ---------- Telegram ----------
+// Отправка идёт с этого сервера напрямую на api.telegram.org (или на TG_API_BASE),
+// при необходимости через HTTP-прокси TG_PROXY. Сторонних шлюзов в коде нет.
+function tgRequest(url, body) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const opts = {
+      method: "POST",
+      hostname: u.hostname,
+      port: u.port || (u.protocol === "https:" ? 443 : 80),
+      path: u.pathname + u.search,
+      headers: { "content-type": "application/json", "content-length": Buffer.byteLength(body) },
+      timeout: 10000,
+    };
+    const lib = u.protocol === "https:" ? https : http;
+    const send = (extra = {}) => {
+      const req = lib.request({ ...opts, ...extra }, (res) => { res.resume(); res.on("end", () => resolve(res.statusCode)); });
+      req.on("timeout", () => req.destroy(new Error("таймаут")));
+      req.on("error", reject);
+      req.end(body);
+    };
+    if (!cfg.tgProxy || u.protocol !== "https:") return send();
+    // через HTTP-прокси: просим прокси открыть туннель (CONNECT), дальше обычный HTTPS
+    const px = new URL(cfg.tgProxy);
+    const headers = { host: `${u.hostname}:${opts.port}` };
+    if (px.username) {
+      headers["proxy-authorization"] = "Basic " + Buffer.from(`${decodeURIComponent(px.username)}:${decodeURIComponent(px.password)}`).toString("base64");
+    }
+    const c = http.request({ hostname: px.hostname, port: px.port || 80, method: "CONNECT", path: `${u.hostname}:${opts.port}`, headers, timeout: 10000 });
+    c.on("timeout", () => c.destroy(new Error("таймаут прокси")));
+    c.on("error", reject);
+    c.on("connect", (res, socket) => {
+      if (res.statusCode !== 200) { socket.destroy(); return reject(new Error("прокси ответил " + res.statusCode)); }
+      send({ createConnection: () => tls.connect({ socket, servername: u.hostname }), agent: false });
+    });
+    c.end();
+  });
+}
+
 async function telegram(text) {
   if (!cfg.tgToken || !cfg.tgChat) return;
-  const r = await fetch(`https://api.telegram.org/bot${cfg.tgToken}/sendMessage`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ chat_id: cfg.tgChat, text, parse_mode: "HTML", disable_web_page_preview: true }),
-    signal: AbortSignal.timeout(10000),
-  });
-  if (!r.ok) throw new Error("Telegram: HTTP " + r.status);
+  const body = JSON.stringify({ chat_id: cfg.tgChat, text, parse_mode: "HTML", disable_web_page_preview: true });
+  const code = await tgRequest(`${cfg.tgApi}/bot${cfg.tgToken}/sendMessage`, body);
+  if (code !== 200) throw new Error("Telegram: HTTP " + code);
 }
 
 // ---------- удаление старых заявок ----------
