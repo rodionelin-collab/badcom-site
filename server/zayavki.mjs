@@ -175,7 +175,10 @@ function tgRequest(url, body) {
     c.on("error", reject);
     c.on("connect", (res, socket) => {
       if (res.statusCode !== 200) { socket.destroy(); return reject(new Error("прокси ответил " + res.statusCode)); }
-      send({ createConnection: () => tls.connect({ socket, servername: u.hostname }), agent: false });
+      // запрос должен идти именно по готовому туннелю, а не открывать новое соединение напрямую
+      const agent = new https.Agent({ keepAlive: false });
+      agent.createConnection = () => tls.connect({ socket, servername: u.hostname });
+      send({ agent });
     });
     c.end();
   });
