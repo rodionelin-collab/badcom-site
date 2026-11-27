@@ -137,6 +137,12 @@ function smtpSend({ from, to, subject, text }) {
 }
 
 // ---------- Telegram ----------
+// У ошибок сети (например, AggregateError при недоступном адресе) message бывает пустым, поэтому берём код и вложенные причины
+function errText(e) {
+  const parts = [e.code, e.message].filter(Boolean);
+  if (Array.isArray(e.errors)) for (const x of e.errors) parts.push([x.code, x.address && `${x.address}:${x.port}`].filter(Boolean).join(" "));
+  return parts.join(" | ") || String(e);
+}
 // Отправка идёт с этого сервера напрямую на api.telegram.org (или на TG_API_BASE),
 // при необходимости через HTTP-прокси TG_PROXY. Сторонних шлюзов в коде нет.
 function tgRequest(url, body) {
@@ -250,7 +256,7 @@ async function handleZayavka(req, res) {
     telegram(cfg.tgFull
       ? `<b>Новая заявка № ${z.id}</b>\n${esc(z.name)}\n${esc(z.phone)}\n${esc(z.district)}, ${esc(z.address)}\n${esc(z.client)}\n${esc(z.message)}`
       : `Новая заявка с сайта № ${z.id}. Район: ${esc(z.district || "не указан")}. Подробности в почте ${esc(cfg.mailTo)}.`)
-      .catch((e) => log("Telegram не отправлен:", e.message)),
+      .catch((e) => log("Telegram не отправлен:", errText(e))),
   ];
   await Promise.all(jobs);
   return done(res, 303, cfg.thanksUrl);
