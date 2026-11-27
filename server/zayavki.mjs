@@ -256,7 +256,7 @@ async function handleZayavka(req, res) {
     telegram(cfg.tgFull
       ? `<b>Новая заявка № ${z.id}</b>\n${esc(z.name)}\n${esc(z.phone)}\n${esc(z.district)}, ${esc(z.address)}\n${esc(z.client)}\n${esc(z.message)}`
       : `Новая заявка с сайта № ${z.id}. Район: ${esc(z.district || "не указан")}. Подробности в почте ${esc(cfg.mailTo)}.`)
-      .catch((e) => log("Telegram не отправлен:", errText(e))),
+      .catch((e) => log("Telegram не отправлен" + (cfg.tgProxy ? " (через прокси)" : " (напрямую)") + ":", errText(e))),
   ];
   await Promise.all(jobs);
   return done(res, 303, cfg.thanksUrl);
@@ -282,6 +282,14 @@ const server = http.createServer(async (req, res) => {
 purge();
 setInterval(purge, 24 * 3600e3).unref();
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  server.listen(cfg.port, cfg.host, () => log(`Приём заявок запущен на ${cfg.host}:${cfg.port}`));
+  server.listen(cfg.port, cfg.host, () => {
+    log(`Приём заявок запущен на ${cfg.host}:${cfg.port}`);
+    if (!cfg.tgToken || !cfg.tgChat) log("Telegram: выключен (нет TG_BOT_TOKEN или TG_CHAT_ID)");
+    else {
+      let via = "напрямую";
+      if (cfg.tgProxy) { try { const u = new URL(cfg.tgProxy); via = `через прокси ${u.hostname}:${u.port || 80}`; } catch { via = "ОШИБКА в TG_PROXY, адрес не разобран"; } }
+      log(`Telegram: включён, ${via}, адрес ${cfg.tgApi}`);
+    }
+  });
 }
 export { server, purge, cfg };
